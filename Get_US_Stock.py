@@ -53,7 +53,8 @@ ticker['insert date'] = datetime.today()
 ##################################
 #Export the file to google storage
 ##################################
-
+from google.cloud import storage
+client = storage.Client()
 bucket2 = client.get_bucket('mastfiles')
 df_out = pd.DataFrame(ticker)
 df_out.to_csv('ticker_listUS.csv', index=False)
