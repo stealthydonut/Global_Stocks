@@ -42,7 +42,13 @@ ticker = data3.append(set1, ignore_index=True)
 from datetime import datetime, timedelta
 insert = datetime.today()
 
-ticker['insert date'] = datetime.today()
+year = datetime.today().year
+month = datetime.today().month
+day = datetime.today().day 
+
+stamp=str(month)+'/'+str(day)+'/'+str(year)
+
+ticker['insert date'] = stamp
 
 ##################################
 #Clean up the market captilization 
