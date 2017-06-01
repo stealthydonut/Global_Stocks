@@ -8,6 +8,7 @@ import pandas as pd
 #sudo pip install beautifulsoup4
 import html5lib
 import beautifulsoup4
+import datetime
 
 dls = "http://www.nasdaq.com/screening/companies-by-name.aspx?letter=0&exchange=nasdaq&render=download"
 urllib.urlretrieve(dls, "test.xls")
@@ -20,3 +21,11 @@ data = pd.read_csv('test.xls')
 dls = "http://www.nasdaq.com/screening/companies-by-name.aspx?letter=0&exchange=amex&render=download"
 urllib.urlretrieve(dls, "test.xls")
 data = pd.read_csv('test.xls')
+
+#Create a timestamp to insert on a master table
+
+from datetime import datetime, timedelta
+timevalue = datetime.today() - timedelta(days=1)
+day = timevalue.day
+month = timevalue.month
+year = timevalue.year
