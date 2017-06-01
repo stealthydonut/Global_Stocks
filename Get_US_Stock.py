@@ -7,7 +7,7 @@ import pandas as pd
 #sudo -H pip install html5lib==1.0b8
 #sudo pip install beautifulsoup4
 import html5lib
-import beautifulsoup4
+#import beautifulsoup4
 import datetime
 
 ######################################
