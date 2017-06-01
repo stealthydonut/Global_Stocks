@@ -39,7 +39,7 @@ month2=month.strftime('%B')
 myfile = ''
 bigdata = pd.DataFrame()
 
-for i in gdxj_ticker:
+for i in df2:
     try:#Develop the text string that can get all the data
         stringone='https://www.google.com/finance/historical?output=csv&q='
         ticker=''.join([i])
