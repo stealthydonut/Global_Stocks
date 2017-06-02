@@ -9,6 +9,7 @@ import pandas as pd
 import html5lib
 #import beautifulsoup4
 import datetime
+import StringIO
 
 ######################################
 #Download the files from the exchanges
@@ -56,6 +57,30 @@ ticker['insert date'] = stamp
 #ticker['char']=ticker['MarketCap'].str[-1:]
 #tickerB = ticker[ticker['char'] == 'B']
 #tickerB = ticker[ticker['char'] == 'B']
+
+#############################
+#Generate the Historical File
+#############################
+from google.cloud import storage
+#client = storage.Client()
+bucket = client.get_bucket('mastfiles')
+# Then do other things...
+blob = bucket.get_blob('ticker_listUS.csv')
+content = blob.download_as_string()
+inMemoryFile = StringIO.StringIO()
+inMemoryFile.write(content)
+inMemoryFile.seek(0)
+prior_day=pd.read_csv(inMemoryFile, low_memory=False)
+
+bigdata = prior_day.append(ticker, ignore_index=True)
+
+from google.cloud import storage
+client = storage.Client()
+bucket2 = client.get_bucket('historicalfiles')
+df_out = pd.DataFrame(bigdata)
+df_out.to_csv('ticker_listUS_historical.csv', index=False)
+blob2 = bucket2.blob('ticker_listUS_historical.csv')
+blob2.upload_from_filename('ticker_listUS_historical.csv')
 
 ##################################
 #Export the file to google storage
