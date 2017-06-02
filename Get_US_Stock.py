@@ -54,9 +54,26 @@ ticker['insert date'] = stamp
 ##################################
 #Clean up the market captilization 
 ##################################
-#ticker['char']=ticker['MarketCap'].str[-1:]
-#tickerB = ticker[ticker['char'] == 'B']
-#tickerB = ticker[ticker['char'] == 'B']
+ticker['char']=ticker['MarketCap'].str[-1:]
+ticker['var'] = ticker.loc[ticker['MarketCap'].index, 'MarketCap'].map(lambda x: x.replace('$','').replace('.','').replace('B','').replace('M','').replace('n/a',''))
+tickerB = ticker[ticker['char'] == 'B']
+tickerB['zero']= '000000000'
+tickerB['Mkt Cap']=tickerB['var']+tickerB['zero']
+tickerB['Mkt Cap']=pd.to_numeric(tickerB['Mkt Cap'], errors='coerce')
+tickerB['LastSale']=pd.to_numeric(tickerB['LastSale'], errors='coerce')
+tickerB['Shares']=tickerB['Mkt Cap']/tickerB['LastSale']
+tickerB['Shares'] = tickerB['Shares'].round(0).astype(int)
+tickerM = ticker[ticker['char'] == 'M']
+tickerM['zero']= '000000'
+tickerM['Mkt Cap']=tickerM['var']+tickerM['zero']
+tickerM['Mkt Cap']=pd.to_numeric(tickerM['Mkt Cap'], errors='coerce')
+tickerM['LastSale']=pd.to_numeric(tickerM['LastSale'], errors='coerce')
+tickerM['Shares']=tickerM['Mkt Cap']/tickerM['LastSale']
+tickerM['Shares'] = tickerM['Shares'].round(0).astype(int)
+tickera = ticker[ticker['char'] == 'a']
+
+file1 = tickerM.append(tickerB, ignore_index=True)
+ticker_gold = tickera.append(file1, ignore_index=True)
 
 #############################
 #Generate the Historical File
@@ -72,7 +89,7 @@ inMemoryFile.write(content)
 inMemoryFile.seek(0)
 prior_day=pd.read_csv(inMemoryFile, low_memory=False)
 
-bigdata = prior_day.append(ticker, ignore_index=True)
+bigdata = prior_day.append(ticker_gold, ignore_index=True)
 
 from google.cloud import storage
 client = storage.Client()
