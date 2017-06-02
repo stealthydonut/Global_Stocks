@@ -54,7 +54,8 @@ ticker['insert date'] = stamp
 #Clean up the market captilization 
 ##################################
 #ticker['char']=ticker['MarketCap'].str[-1:]
-#tickerB = ticker['char'] == 'B'
+#tickerB = ticker[ticker['char'] == 'B']
+#tickerB = ticker[ticker['char'] == 'B']
 
 ##################################
 #Export the file to google storage
