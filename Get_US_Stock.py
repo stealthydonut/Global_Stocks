@@ -79,7 +79,7 @@ ticker_gold = tickera.append(file1, ignore_index=True)
 #Generate the Historical File
 #############################
 from google.cloud import storage
-#client = storage.Client()
+client = storage.Client()
 bucket = client.get_bucket('mastfiles')
 # Then do other things...
 blob = bucket.get_blob('ticker_listUS.csv')
