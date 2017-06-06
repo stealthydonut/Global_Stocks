@@ -73,7 +73,27 @@ tickerM['Shares'] = tickerM['Shares'].round(0).astype(int)
 tickera = ticker[ticker['char'] == 'a']
 
 file1 = tickerM.append(tickerB, ignore_index=True)
-ticker_gold = tickera.append(file1, ignore_index=True)
+file2 = tickera.append(file1, ignore_index=True)
+
+##################################
+#Begin to create the google ticker
+##################################
+
+#Replace the tickers with the google symbol
+file2['symbol2'] = file2.loc[file2['Symbol'].index, 'Symbol'].map(lambda x: x.replace('^','-').replace('.WS',''))
+#Get the correct google symbol
+tickeramex = file2[file2['Index'] == 'amex']
+tickeramex['exchange']='NYSEMKT:'
+tickeramex['google symbol']=tickeramex['exchange']+tickeramex['symbol2']
+tickernas = file2[file2['Index'] == 'nasdaq']
+tickernas['exchange']='NASDAQ:'
+tickernas['google symbol']=tickernas['exchange']+tickernas['symbol2']
+tickernyse = file2[file2['Index'] == 'nyse']
+tickernyse['exchange']='NYSEMKT:'
+tickernyse['google symbol']=tickernyse['exchange']+tickernyse['symbol2']
+
+file3 = tickernas.append(tickernyse, ignore_index=True)
+ticker_gold = tickeramex.append(file3, ignore_index=True)
 
 #############################
 #Generate the Historical File
