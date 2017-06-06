@@ -125,7 +125,7 @@ blob2.upload_from_filename('ticker_listUS_historical.csv')
 from google.cloud import storage
 client = storage.Client()
 bucket2 = client.get_bucket('mastfiles')
-df_out = pd.DataFrame(ticker)
+df_out = pd.DataFrame(ticker_gold)
 df_out.to_csv('ticker_listUS.csv', index=False)
 blob2 = bucket2.blob('ticker_listUS.csv')
 blob2.upload_from_filename('ticker_listUS.csv')
