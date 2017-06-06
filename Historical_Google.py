@@ -14,7 +14,7 @@ from google.cloud import storage
 client = storage.Client()
 bucket = client.get_bucket('mastfiles')
 # Then do other things...
-blob = bucket.get_blob('ticker_listUS.csv')
+blob = bucket.get_blob('ticker_listUS_test.csv')
 content = blob.download_as_string()
 #Because the pandas dataframe can only read from buffers or files, we need to take the string and put it into a buffer
 inMemoryFile = StringIO.StringIO()
@@ -24,7 +24,7 @@ inMemoryFile.seek(0)
 #Note - anytime you read from a buffer you need to seek so it starts at the beginning
 #The low memory false exists because there was a lot of data
 df=pd.read_csv(inMemoryFile, low_memory=False)
-df1=df['Symbol']
+df1=df['google symbol']
 df2=df1.values.T.tolist()
 #strip out leading and trailing 0's
 df2 = [x.strip(' ') for x in df2]    
@@ -48,6 +48,13 @@ for i in df2:
         text2=stringone+ticker+startdate+enddate      
         data = pd.read_csv(text2)
         data['ticker']= i
+        #need to convert this file so can read the date
+        bigdata['date']=pd.to_datetime(bigdata['Date'], errors='coerce')
+        data=data.sort_values(['date','ticker'],ascending=False)
+        data['close_lag1']=data['Close'].shift(1)
+        #data['changepos']=np.where(data['Close']>data['close_lag1'], 1, 0)
+        #data['changeneg']=np.where(data['Close']<data['close_lag1'], 1, 0)
+        #data['changenone']=np.where(data['Close']==data['close_lag1'], 1, 0)
         bigdata = bigdata.append(data, ignore_index=False)
     except:
         print i
