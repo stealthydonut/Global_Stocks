@@ -1,6 +1,7 @@
 #This program will get the historical data for a number of tickers
 import urllib
 import pandas as pd
+import numpy as np
 import StringIO
 import datetime
 import sys
@@ -43,25 +44,23 @@ for i in df2:
     try:#Develop the text string that can get all the data
         stringone='https://www.google.com/finance/historical?output=csv&q='
         ticker=''.join([i])
-        startdate='&startdate=May+22%2C+2015'
+        startdate='&startdate=May+22%2C+2010'
         enddate='&enddate='+str(month2)+'+'+str(day)+'%2C+'+str(year)
         text2=stringone+ticker+startdate+enddate      
         data = pd.read_csv(text2)
+        data.columns = ['Date','Open','High','Low','Close','Volume']
         data['ticker']= i
         #need to convert this file so can read the date
-        bigdata['date']=pd.to_datetime(bigdata['Date'], errors='coerce')
-        data=data.sort_values(['date','ticker'],ascending=False)
+        data['date']=pd.to_datetime(data['Date'], errors='coerce')
+        data.sort_values('date',ascending=True, inplace=True)
         data['close_lag1']=data['Close'].shift(1)
-        #data['changepos']=np.where(data['Close']>data['close_lag1'], 1, 0)
-        #data['changeneg']=np.where(data['Close']<data['close_lag1'], 1, 0)
-        #data['changenone']=np.where(data['Close']==data['close_lag1'], 1, 0)
+        data['changepos']=np.where(data['Close']>data['close_lag1'], 1, 0)
+        data['changeneg']=np.where(data['Close']<data['close_lag1'], 1, 0)
+        data['changenone']=np.where(data['Close']==data['close_lag1'], 1, 0)
         bigdata = bigdata.append(data, ignore_index=False)
     except:
         print i
-
-        
-bigdata.columns = [['Date', 'Open','High','Low','Close','Volume', 'ticker']]
-        
+        print("Unexpected error:", sys.exc_info()[0])
         
         
 #Put the dataset back into storage
