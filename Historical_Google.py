@@ -15,7 +15,7 @@ from google.cloud import storage
 client = storage.Client()
 bucket = client.get_bucket('mastfiles')
 # Then do other things...
-blob = bucket.get_blob('ticker_listUS_test.csv')
+blob = bucket.get_blob('ticker_listUS.csv')
 content = blob.download_as_string()
 #Because the pandas dataframe can only read from buffers or files, we need to take the string and put it into a buffer
 inMemoryFile = StringIO.StringIO()
@@ -64,8 +64,8 @@ for i in df2:
         
         
 #Put the dataset back into storage
-bucket2 = client.get_bucket('mastfiles')
+bucket2 = client.get_bucket('stagingarea')
 df_out = pd.DataFrame(bigdata)
-df_out.to_csv('closing_prices_hist.csv', index=False)
-blob2 = bucket2.blob('closing_prices_hist.csv')
-blob2.upload_from_filename('closing_prices_hist.csv')
+df_out.to_csv('closing_prices_histUS.csv', index=False)
+blob2 = bucket2.blob('closing_prices_histUS.csv')
+blob2.upload_from_filename('closing_prices_histUS.csv')
