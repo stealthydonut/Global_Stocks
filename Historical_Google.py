@@ -57,6 +57,10 @@ for i in df2:
         data['changepos']=np.where(data['Close']>data['close_lag1'], 1, 0)
         data['changeneg']=np.where(data['Close']<data['close_lag1'], 1, 0)
         data['changenone']=np.where(data['Close']==data['close_lag1'], 1, 0)
+        data['High']=pd.to_numeric(data['High'], errors='coerce')
+        data['Low']=pd.to_numeric(data['Low'], errors='coerce')
+        data['Open']=pd.to_numeric(data['Open'], errors='coerce')
+        data['Volume']=pd.to_numeric(data['Volume'], errors='coerce')
         bigdata = bigdata.append(data, ignore_index=False)
     except:
         print i
