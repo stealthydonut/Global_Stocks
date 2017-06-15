@@ -51,6 +51,7 @@ for i in df2:
         data.columns = ['Date','Open','High','Low','Close','Volume']
         data['ticker']= i
         #need to convert this file so can read the date
+        data['dates']=pd.to_datetime(data['Date'], errors='coerce')
         data['date']=pd.to_datetime(data['Date'], errors='coerce')
         data.sort_values('date',ascending=True, inplace=True)
         data['close_lag1']=data['Close'].shift(1)
