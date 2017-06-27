@@ -14,10 +14,10 @@ myfile = ''
 for i in ticker:
     try:#Develop the text string that can get all the data
         start="http://finance.yahoo.com/d/quotes.csv?s="
-        #date,Float Shares,Day's Low,Day's High,Open,Previous Close,Change,Volume,Name,Ticker
+        #date,Float Shares,Day's Low,Day's High,Open,Previous Close,Change,Volume,Name,Ticker,52 Low, 52 High,Dividend Share
         #end="&f=d1f6ghopc1vns"
         #date,Float ,Name,Ticker
-        end="&f=d1f6s7oc1pghns"
+        end="&f=d1f6s7oc1pghnsjkdk5j6r"
         str1 = ''.join([i])
         text2=start+str1+end    
         #Get the data from the yahoo api
@@ -31,7 +31,8 @@ for i in ticker:
     
 TESTDATA=stio(myfile)
 
-daily_prices = pd.read_csv(TESTDATA, sep=",", names=['date','Float Shares','Short Ratio','Open','Change','Previous Close','Low','High','Name','Ticker'])
+daily_prices = pd.read_csv(TESTDATA, sep=",", names=['date','Float Shares','Short Ratio','Open','Change','Previous Close','Low','High','Name','Ticker','52 Low','52 High','Dividend','Per change 52 H','Per change 52 L','PE Ratio'])
+daily_prices['Div Yield']=(daily_prices['Dividend']/daily_prices['Previous Close'])*100
 
 
     
