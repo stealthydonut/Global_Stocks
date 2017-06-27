@@ -8,7 +8,7 @@ if sys.version_info[0] < 3:
 else:
     from io import StringIO as stio
     
-ticker = ['APC','BTE']    
+ticker = ['APC','BTE','CVE','CLR','CRZO','DVN','GTE','HK','MRO','RRC','WLL']    
     
 myfile = ''
 for i in ticker:
