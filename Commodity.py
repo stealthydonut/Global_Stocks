@@ -9,6 +9,7 @@ ism = quandl.get("ISM/NONMAN_INVSENT")
 gold = quandl.get("LBMA/GOLD")
 silver = quandl.get("LBMA/SILVER")
 oil = quandl.get("OPEC/ORB")
+uranium = quandl.get("ODA/PURAN_USD")
 
 #Index Generation
 gold['ind']=gold.index
