@@ -50,13 +50,19 @@ for i in df2:
     except:
         print i
 
-#add yield and join back industry
+        
+TESTDATA=stio(myfile)
+
+daily_prices = pd.read_csv(TESTDATA, sep=",", names=['date','Float Shares','Short Ratio','Open','Change','Previous Close','Low','High','Name','Ticker','52 Low','52 High','Dividend','Per change 52 H','Per change 52 L','PE Ratio'])
+daily_prices['Div Yield']=(daily_prices['Dividend']/daily_prices['Previous Close'])*100      
+
+bigdata=pd.merge(daily_prices, df, left_on='Ticker', right_on='Symbol')
         
 #Put the dataset back into storage
 from google.cloud import storage
 client = storage.Client()
 bucket2 = client.get_bucket('oiltrade')
-df_out = pd.DataFrame(myfile)
+df_out = pd.DataFrame(bigdata)
 df_out.to_csv('all_alligator.csv', index=False)
 blob2 = bucket2.blob('all_alligator.csv')
 blob2.upload_from_filename('all_alligator.csv')
