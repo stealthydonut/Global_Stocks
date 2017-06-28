@@ -37,10 +37,10 @@ myfile = ''
 for i in df2:
     try:#Develop the text string that can get all the data
         start="http://finance.yahoo.com/d/quotes.csv?s="
-        #date,Float Shares,Day's Low,Day's High,Open,Previous Close,Change,Volume,Name,Ticker,52 Low, 52 High,Dividend Share
+        #date,Float Shares,Day's Low,Day's High,Open,Previous Close,Change,Volume,Name,Ticker,52 Low, 52 High,Dividend Share, Volume
         #end="&f=d1f6ghopc1vns"
         #date,Float ,Name,Ticker
-        end="&f=d1f6s7oc1pghnsjkdk5j6r"
+        end="&f=d1f6s7oc1pghnsjkdk5j6rv"
         str1 = ''.join([i])
         text2=start+str1+end    
         #Get the data from the yahoo api
@@ -53,7 +53,7 @@ for i in df2:
         
 TESTDATA=stio(myfile)
 
-daily_prices = pd.read_csv(TESTDATA, sep=",", names=['date','Float Shares','Short Ratio','Open','Change','Previous Close','Low','High','Name','Ticker','52 Low','52 High','Dividend','Per change 52 H','Per change 52 L','PE Ratio'])
+daily_prices = pd.read_csv(TESTDATA, sep=",", names=['date','Float Shares','Short Ratio','Open','Change','Previous Close','Low','High','Name','Ticker','52 Low','52 High','Dividend','Per change 52 H','Per change 52 L','PE Ratio','Volume'])
 daily_prices['Div Yield']=(daily_prices['Dividend']/daily_prices['Previous Close'])*100      
 
 bigdata=pd.merge(daily_prices, df, left_on='Ticker', right_on='Symbol')
@@ -69,7 +69,7 @@ inMemoryFile.write(content)
 #When you buffer, the "cursor" is at the end, and when you read it, the starting position is at the end and it will not pick up anything
 inMemoryFile.seek(0)
 
-daily_prices2 = pd.read_csv(inMemoryFile, sep=",", header=1, names=['date','Float Shares','Short Ratio','Open','Change','Previous Close','Low','High','Name','Ticker','52 Low','52 High','Dividend','Per change 52 H','Per change 52 L','PE Ratio','Div Yield','IPOyear','Index','LastSale','MarketCap','Mkt Cap','Name_y','Sector','industry','insert date','var','zero','symbol2','exchange','google symbol'])
+daily_prices2 = pd.read_csv(inMemoryFile, sep=",", header=1, names=['date','Float Shares','Short Ratio','Open','Change','Previous Close','Low','High','Name','Ticker','52 Low','52 High','Dividend','Per change 52 H','Per change 52 L','PE Ratio','Div Yield','IPOyear','Index','LastSale','MarketCap','Mkt Cap','Name_y','Sector','industry','insert date','var','zero','symbol2','exchange','google symbol','Volume'])
 
 bigdata2 = daily_prices2.append(bigdata, ignore_index=True)
 
