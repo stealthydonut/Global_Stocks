@@ -49,7 +49,9 @@ for i in df2:
         myfile += f.readline()
     except:
         print i
-     
+
+#add yield and join back industry
+        
 #Put the dataset back into storage
 from google.cloud import storage
 client = storage.Client()
