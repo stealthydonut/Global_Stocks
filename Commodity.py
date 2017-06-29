@@ -10,23 +10,34 @@ gold = quandl.get("LBMA/GOLD")
 silver = quandl.get("LBMA/SILVER")
 oil = quandl.get("OPEC/ORB")
 uranium = quandl.get("ODA/PURAN_USD")
+tax = quandl.get("FMSTREAS/MTS")
 
 #Index Generation
 gold['ind']=gold.index
 silver['ind']=silver.index
 oil['ind']=oil.index
-pfile=gold.merge(silver, on='ind', how='outer')
+pfile2=gold.merge(silver, on='ind', how='outer')
+pfile=pfile.merge(oil, on='ind', how='outer')
+
 
 pfile['gs_ratio']=pfile['USD (PM)']/pfile['USD']
+pfile['go_ratio']=pfile['USD (PM)']/pfile['Value']
 
-
+##################
+#Monthly Analytics
+##################
 #data manipulation to get a month and year variaable
-#ism['index1'] = ism.index
-#ism['monthyear'] = ism['index1'].dt.strftime("%m,%y")
-#gold['index1'] = gold.index
-#gold['monthyear'] = gold['index1'].dt.strftime("%m,%y")
-#test=gold.merge(ism_gold, on='monthyear', how='outer')
+ism['index1'] = ism.index
+ism['monthyear'] = ism['index1'].dt.strftime("%m,%y")
+gold['index1'] = gold.index
+gold['monthyear'] = gold['index1'].dt.strftime("%m,%y")
+gold['daycnt'] = 1
+goldmth= gold.groupby(['monthyear'], as_index=False)['USD (PM)','daycnt'].sum()
+goldmth['gold_price']=goldmth['USD (PM)']/goldmth['daycnt']
 
+
+test=goldmth.merge(ism, on='monthyear', how='outer')
+print test
 
 pfile['dateplotx'] = [dt.datetime(year=d.year, month=d.month, day=d.day) for d in pfile['ind']]
 
@@ -43,7 +54,7 @@ for month,year,day in zip(pfile['month'], pfile['year'], pfile['day']):
         
 #This is to convert everything into an array and to check the frequency
 s1 = [float(x) for x in pfile['gs_ratio']]
-#s2 = [float(x) for x in afile['ma10_l150']]
+s2 = [float(x) for x in pfile['go_ratio']]
 #s3 = [float(x) for x in afile['ma10_h40']]
 #s4 = [float(x) for x in afile['ma10_l40']]
 #s5 = [float(x) for x in afile['Ind_Close']]
@@ -51,7 +62,7 @@ s1 = [float(x) for x in pfile['gs_ratio']]
 #s7 = [float(x) for x in afile['ma10_40_delta']]
 #s8 = [float(x) for x in afile['ma10_ad10']]
 s1=np.array(s1)
-#s2=np.array(s2)
+s2=np.array(s2)
 #s3=np.array(s3)
 #s4=np.array(s4)
 #s5=np.array(s5)
@@ -60,7 +71,7 @@ s1=np.array(s1)
 #s8=np.array(s8)
 dateplot=np.array(dateplot)
 print('s1 - ' + str(len(s1)))
-#print('s2 - ' + str(len(s2)))
+print('s2 - ' + str(len(s2)))
 #print('s3 - ' + str(len(s3)))
 #print('s4 - ' + str(len(s4)))
 #print('s5 - ' + str(len(s5)))
@@ -76,11 +87,33 @@ graph1.tick_params('y', colors='b')
 graph1.plot(dateplot,s1,'b:', linewidth=2.0, label='G/S Ratio')
 graph1.plot.grid(True)
 graph1.legend(loc='upper left')
+
+fig = plt.figure(figsize=(20,15))
+graph2 = fig.add_subplot(411)
+graph2.tick_params('y', colors='b')
+graph2.plot(dateplot,s2,'r:', linewidth=2.0, label='G/O Ratio')
+graph2.plot.grid(True)
+graph2.legend(loc='upper left')
+plt.show
+
+fig = plt.figure(figsize=(20,15))
+#As soon as graph1 is initialized, everything below the block is included until another graph is initialized
+graph1 = fig.add_subplot(411)
+graph1.tick_params('y', colors='b')
+graph1.plot(dateplot,s1,'b:', linewidth=2.0, label='G/S Ratio')
+graph1.plot(dateplot,s2,'k:', linewidth=2.0, dashes=(5,10), label='G/O Ratio')
+graph1.legend(loc='upper left')
+graph1.set_ylabel('High and Lows Over 150 Days')
+graph1.axes.xaxis.set_ticklabels([])
+graph2 = graph1.twinx() #this creates the same x axis with an independent y
+graph2.tick_params('y', colors='r')
+graph2.set_ylabel('Index Close')
+
         
         
 #This is to convert everything into an array and to check the frequency
 s1 = [float(x) for x in pfile['gs_ratio']]
-#s2 = [float(x) for x in afile['ma10_l150']]
+s2 = [float(x) for x in pfile['go_ratio']]
 #s3 = [float(x) for x in afile['ma10_h40']]
 #s4 = [float(x) for x in afile['ma10_l40']]
 #s5 = [float(x) for x in afile['Ind_Close']]
@@ -88,7 +121,7 @@ s1 = [float(x) for x in pfile['gs_ratio']]
 #s7 = [float(x) for x in afile['ma10_40_delta']]
 #s8 = [float(x) for x in afile['ma10_ad10']]
 s1=np.array(s1)
-#s2=np.array(s2)
+s2=np.array(s2)
 #s3=np.array(s3)
 #s4=np.array(s4)
 #s5=np.array(s5)
@@ -97,7 +130,7 @@ s1=np.array(s1)
 #s8=np.array(s8)
 dateplot=np.array(dateplot)
 print('s1 - ' + str(len(s1)))
-#print('s2 - ' + str(len(s2)))
+print('s2 - ' + str(len(s2)))
 #print('s3 - ' + str(len(s3)))
 #print('s4 - ' + str(len(s4)))
 #print('s5 - ' + str(len(s5)))
@@ -123,8 +156,8 @@ plt.show
 
 graph3 = fig.add_subplot(412)
 graph3.tick_params('y', colors='b')
-graph3.plot(dateplot,s3,'b:', linewidth=3.0, label='40dayH')
-graph3.plot(dateplot,s4,'k:', linewidth=3.0, dashes=(5,10), label='40dayL')
+graph3.plot(dateplot,s2,'b:', linewidth=3.0, label='40dayH')
+#graph3.plot(dateplot,s4,'k:', linewidth=3.0, dashes=(5,10), label='40dayL')
 graph3.legend(loc='upper left')
 graph3.set_ylabel('High and Lows Over 40 Days')
 graph3.axes.xaxis.set_ticklabels([])
@@ -156,4 +189,3 @@ graph8.tick_params('y', colors='r')
 graph8.set_ylabel('Index Close')
 graph8.plot(dateplot,s5,'r-', linewidth=0.5)
 plt.show
-
