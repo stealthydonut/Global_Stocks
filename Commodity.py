@@ -97,17 +97,21 @@ graph2.legend(loc='upper left')
 plt.show
 
 fig = plt.figure(figsize=(20,15))
-#As soon as graph1 is initialized, everything below the block is included until another graph is initialized
+#sA soon as graph1 is initialized, everything below the block is included until another graph is initialized
 graph1 = fig.add_subplot(411)
 graph1.tick_params('y', colors='b')
 graph1.plot(dateplot,s1,'b:', linewidth=2.0, label='G/S Ratio')
-graph1.plot(dateplot,s2,'k:', linewidth=2.0, dashes=(5,10), label='G/O Ratio')
+graph1.plot(dateplot,s2,'k:', linewidth=2.0, dashes=(10,10), label='G/O Ratio')
+
+start, end = graph1.get_xlim()
+#Ticks on the axis
+graph1.xaxis.set_ticks(np.arange(start, end, 3.0 *365))
+graph1.plot()
 graph1.legend(loc='upper left')
-graph1.set_ylabel('High and Lows Over 150 Days')
-graph1.axes.xaxis.set_ticklabels([])
-graph2 = graph1.twinx() #this creates the same x axis with an independent y
-graph2.tick_params('y', colors='r')
-graph2.set_ylabel('Index Close')
+
+
+
+       
 
         
         
