@@ -26,6 +26,17 @@ inMemoryFile.seek(0)
 #Note - anytime you read from a buffer you need to seek so it starts at the beginning
 #The low memory false exists because there was a lot of data
 df=pd.read_csv(inMemoryFile, low_memory=False)
+#df2=[]
+#df2=df[['Ticker','Name','Exchange','Country','Category Name','Category Number']]
+bigdata = pd.DataFrame()
+bigdata=df.columns = [['Ticker','Name','Exchange','Country','Category Name','Category Number']]
+daily_prices = pd.read_csv(df, sep=",", names=['Ticker','Name','Exchange','Country','Category Name','Category Number'])
+
+
+#df3=[]      
+#df3==pd.DataFrame(df2(df2['Country']=='Canada'))
+#df3=df2(df2['Country']=='Canada')
+
 gdxj=df['Ticker']
 gdxj_ticker=gdxj.values.T.tolist()
 #strip out leading and trailing 0's
