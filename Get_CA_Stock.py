@@ -9,6 +9,9 @@ if sys.version_info[0] < 3:
 else:
     from io import StringIO as stio
 
+myfile = ''
+bigdata = pd.DataFrame()
+df1 = []
 
 
 #Get the data from google cloud storage
@@ -26,15 +29,24 @@ inMemoryFile.seek(0)
 #Note - anytime you read from a buffer you need to seek so it starts at the beginning
 #The low memory false exists because there was a lot of data
 df=pd.read_csv(inMemoryFile, low_memory=False)
-df['Ticker2'] =df['Ticker'].astype(str).str.split(',')
-df['Country2'] =df['Country'].astype(str).str.split(',')
-df3=df(df['Country2']=='Canada')
-prin
-#df3=[]      
-#df3==pd.DataFrame(df2(df2['Country']=='Canada'))
-#df3=df2(df2['Country']=='Canada')
+df1=df[df['Country']=='Canada']
+df2=df1['Ticker']
+df3=df2.values.T.tolist()
 
-gdxj=df['Ticker']
-gdxj_ticker=gdxj.values.T.tolist()
-#strip out leading and trailing 0's
-gdxj_ticker = [x.strip(' ') for x in gdxj_ticker]
+#df2=['VEMLY','SAP.TO']
+
+for i in df3:
+    try:#Develop the text string that can get all the data
+        start="http://finance.yahoo.com/d/quotes.csv?s="
+        #date,Float Shares,Day's Low,Day's High,Open,Previous Close,Change,Volume,Name,Ticker,52 Low, 52 High,Dividend Share, Volume
+        #end="&f=d1f6ghopc1vns"
+        #date,Float ,Name,Ticker
+        end="&f=d1f6s7oc1pghnsjkdk5j6rv"
+        str1 = ''.join([i])
+        text2=start+str1+end    
+        #Get the data from the yahoo api
+        link=text2
+        f = urllib.urlopen(link)
+        myfile += f.readline()
+    except:
+        print i
