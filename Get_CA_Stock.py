@@ -50,3 +50,16 @@ for i in df3:
         myfile += f.readline()
     except:
         print i
+
+        TESTDATA=stio(myfile)
+
+daily_prices = pd.read_csv(TESTDATA, sep=",", names=['date','Float Shares','Short Ratio','Open','Change','Previous Close','Low','High','Name','Ticker','52 Low','52 High','Dividend','Per change 52 H','Per change 52 L','PE Ratio','Volume'])
+daily_prices['Div Yield']=(daily_prices['Dividend']/daily_prices['Previous Close'])*100      
+#Put the dataset back into storage
+from google.cloud import storage
+client = storage.Client()
+bucket2 = client.get_bucket('oiltrade')
+df_out = pd.DataFrame(daily_prices)
+df_out.to_csv('all_ca.csv', index=False)
+blob2 = bucket2.blob('all_ca.csv')
+blob2.upload_from_filename('all_aca.csv')
