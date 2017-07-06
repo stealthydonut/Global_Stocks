@@ -55,31 +55,16 @@ daily_prices['Div Yield']=(daily_prices['Dividend']/daily_prices['Previous Close
 daily_prices['Mkt Cap']=daily_prices['Previous Close']*daily_prices['Float Shares']
 
 #merge the original file back into the current file
-
-daily_prices['Debt Ratio']
-
-from google.cloud import storage
-client = storage.Client()
-bucket = client.get_bucket('oiltrade')
-# Then do other things...
-blob = bucket.get_blob('oil_alligator.csv')
-content = blob.download_as_string()
-inMemoryFile = StringIO.StringIO()
-inMemoryFile.write(content)
-#When you buffer, the "cursor" is at the end, and when you read it, the starting position is at the end and it will not pick up anything
-inMemoryFile.seek(0)
-
-daily_prices2 = pd.read_csv(inMemoryFile, sep=",", header=1, names=['date','Float Shares','Short Ratio','Open','Change','Previous Close','Low','High','Name','Ticker','52 Low','52 High','Dividend','Per change 52 H','Per change 52 L','PE Ratio','Div Yield'])
-
-bigdata = daily_prices2.append(daily_prices, ignore_index=True)
+outputfile=pd.merge(daily_prices, details, how='left', left_on=['Ticker'], right_on=['Ticker'])
+outputfile['Debt Ratio']=outputfile['Total Debt']/outputfile['Mkt Cap']
 
 #Put the dataset back into storage
 from google.cloud import storage
 client = storage.Client()
 bucket2 = client.get_bucket('oiltrade')
-df_out = pd.DataFrame(bigdata)
-df_out.to_csv('oil_alligator.csv', index=False)
-blob2 = bucket2.blob('oil_alligator.csv')
-blob2.upload_from_filename('oil_alligator.csv')
+df_out = pd.DataFrame(outputfile)
+df_out.to_csv('commodity_alligator.csv', index=False)
+blob2 = bucket2.blob('commodity_alligator.csv')
+blob2.upload_from_filename('commodity_alligator.csv')
 
     
