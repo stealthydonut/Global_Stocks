@@ -1,119 +1,144 @@
 import quandl
+import urllib
 import pandas as pd
 import numpy as np
-import datetime as dt
-import matplotlib
-import matplotlib.pyplot as plt
-import urllib
 import StringIO
+import datetime
 import sys
 if sys.version_info[0] < 3: 
     from StringIO import StringIO as stio
 else:
     from io import StringIO as stio
-
-################
-#Get Quandl Data
-################
+import matplotlib
+import matplotlib.pyplot as plt
 quandl.ApiConfig.api_key = 'BVno6pBYgcEvZJ6uctTr'
+####################
+#Get the Quandl Data
+###################
 ism = quandl.get("ISM/NONMAN_INVSENT")
 gold = quandl.get("LBMA/GOLD")
 silver = quandl.get("LBMA/SILVER")
 oil = quandl.get("OPEC/ORB")
 uranium = quandl.get("ODA/PURAN_USD")
-tax = quandl.get("FMSTREAS/MTS")
+ustax = quandl.get("FMSTREAS/MTS")
 shiller = quandl.get("MULTPL/SHILLER_PE_RATIO_MONTH")
-libor = quandl.get("FRED/USDONTD156N")
-#Must be a better way of getting libor
 
 
-
-
-
-
+######################
+#Clean up Column Names
+######################
+gold.columns=['Gold USD (AM)','Gold USD (PM)','Gold GBP (AM)','Gold GBP (PM)','Gold EURO (AM)','Gold EURO (PM)']
+silver.columns=['Silver USD','Silver GBP','Silver EURO']
+oil.columns=['Oil USD']
+shiller.columns=['Shiller Value']
+ustax.columns=['US Receipts','US Outlays','US Deficit/Surplus (-)','US Borrowing from the Public','USReduction of Operating Cash','US By Other Means']
+ism.columns=['ISM % Too High','ISM % About Right','ISM % Too Low','ISM Diffusion Index']
+uranium.columns=['Uranium Value']
+#################
 #Index Generation
+#################
 gold['ind']=gold.index
 silver['ind']=silver.index
 oil['ind']=oil.index
-pfile2=gold.merge(silver, on='ind', how='outer')
-pfile=pfile.merge(oil, on='ind', how='outer')
+###########################
+#Merge daily files together
+###########################
+df=gold.merge(silver, on='ind', how='outer')
+daily_file=df.merge(oil, on='ind', how='outer')
+#################################
+#Merge the monthly files together
+#################################
+ism['ind'] = ism.index
+ism['monthyear'] = ism['ind'].dt.strftime("%m,%y")
+uranium['ind'] = uranium.index
+uranium['monthyear'] = uranium['ind'].dt.strftime("%m,%y")
+ustax['ind'] = ustax.index
+ustax['monthyear'] = ustax['ind'].dt.strftime("%m,%y")
+########################################
+#Create the monthly files for daily data
+########################################
+gold['monthyear'] = gold['ind'].dt.strftime("%m,%y")
+gold['Gold daycnt'] = 1
+goldmth = gold.groupby(['monthyear'], as_index=False)['Gold USD (AM)','Gold USD (PM)','Gold GBP (AM)','Gold GBP (PM)','Gold EURO (AM)','Gold EURO (PM)','Gold daycnt'].sum()
+silver['monthyear'] = silver['ind'].dt.strftime("%m,%y")
+silver['Silver daycnt'] = 1
+silvermth = silver.groupby(['monthyear'], as_index=False)['Silver USD','Silver GBP','Silver EURO','Silver daycnt'].sum()
+oil['monthyear'] = oil['ind'].dt.strftime("%m,%y")
+oil['Oil daycnt'] = 1
+oilmth = oil.groupby(['monthyear'], as_index=False)['Oil USD','Oil daycnt'].sum()
+################################
+#Merge the monthly data together
+################################
+mf=ustax.merge(goldmth, on='monthyear', how='outer')
+mf1=mf.merge(silvermth, on='monthyear', how='outer')
+mf2=mf1.merge(oilmth, on='monthyear', how='outer')
+mf3=mf2.merge(ism, on='monthyear', how='outer')
+monthly_file=mf3.merge(uranium, on='monthyear', how='outer')
+############################
+#Build measures on the files
+############################
+monthly_file['ma6 US Receipts'] = monthly_file['US Receipts'].rolling(window=6).mean()
+monthly_file['ma6 ISM Diffusion Index'] = monthly_file['ISM Diffusion Index'].rolling(window=6).mean()
+daily_file['Gold Silver Ratio']=daily_file['Gold USD (PM)']/daily_file['Silver USD']
+daily_file['Gold Oil Ratio']=daily_file['Gold USD (PM)']/daily_file['Oil USD']
+daily_file['Silver Oil Ratio']=daily_file['Silver USD']/daily_file['Oil USD']
+####################################
+#Clean up monthly file to be plotted
+####################################
+monthly_file['year'] = monthly_file['ind'].dt.strftime("%Y")
+monthly_file['month'] = monthly_file['ind'].dt.strftime("%m")
+monthly_file['day'] = monthly_file['ind'].dt.strftime("%d")
+daily_file['year'] = daily_file['ind'].dt.strftime("%Y")
+daily_file['month'] = daily_file['ind'].dt.strftime("%m")
+daily_file['day'] = daily_file['ind'].dt.strftime("%d")
 
 
-pfile['gs_ratio']=pfile['USD (PM)']/pfile['USD']
-pfile['go_ratio']=pfile['USD (PM)']/pfile['Value']
-
-##################
-#Monthly Analytics
-##################
-#data manipulation to get a month and year variaable
-ism['index1'] = ism.index
-ism['monthyear'] = ism['index1'].dt.strftime("%m,%y")
-uranium['index1'] = uranium.index
-uranium['monthyear'] = uranium['index1'].dt.strftime("%m,%y")
-uranium['uranium price'] = uranium['Value']
-uranium.__delitem__('Value')
-tax['index1'] = tax.index
-tax['monthyear'] = tax['index1'].dt.strftime("%m,%y")
-
-gold['index1'] = gold.index
-gold['monthyear'] = gold['index1'].dt.strftime("%m,%y")
-gold['daycnt'] = 1
-goldmth= gold.groupby(['monthyear'], as_index=False)['USD (PM)','daycnt'].sum()
-goldmth['gold_price']=goldmth['USD (PM)']/goldmth['daycnt']
-
-
-sp500['monthyear'] = sp500['date2'].dt.strftime("%m,%y")
-sp500['daycnt'] = 1
-sp500mth= sp500.groupby(['monthyear'], as_index=False)['Adj Close','daycnt'].sum()
-sp500mth['spval']=sp500mth['Adj Close']/sp500mth['daycnt']
-
-test2=tax.merge(sp500mth, on='monthyear', how='outer')
+#This is for plotting data on a graph
 #makes a new dataframe copy so that it does not refer back to original
 test3=pd.DataFrame(test2[test2['index1'].notnull()])
-test4=pd.DataFrame(test3[test3['spval'].notnull()])
-test4['dateplotx'] = [dt.datetime(year=int(d.year), month=int(d.month), day=int(d.day)) for d in test4['index1']]
-
-
-test4['year'] = test4['index1'].dt.strftime("%Y")
-test4['month'] = test4['index1'].dt.strftime("%m")
-test4['day'] = test4['index1'].dt.strftime("%d")
-test4['ma6tax'] = test4['Receipts'].rolling(window=6).mean()
-test4['ma6spval'] = test4['spval'].rolling(window=6).mean()
 
 
 
-goldmth.merge(ism, on='monthyear', how='outer')
+monthly_filex=pd.DataFrame(monthly_file[monthly_file['ind'].notnull()])
+monthly_filex.apply(lambda col: col.drop_duplicates().reset_index(drop=True))
+test4['dateplotx'] = [dt.datetime(year=int(d.year), month=int(d.month), day=int(d.day)) for d in monthly_filex['ind']]
 
 
-pfile['dateplotx'] = [dt.datetime(year=d.year, month=d.month, day=d.day) for d in pfile['ind']]
-
-
-pfile['year'] = pfile['ind'].dt.strftime("%Y")
-pfile['month'] = pfile['ind'].dt.strftime("%m")
-pfile['day'] = pfile['ind'].dt.strftime("%d")
 #This Generates a date axis on a daily basis - for monthly exclude day, and make day=1 on dateplot line
 dateplot = []
 dateplot2 = []
 graph1 = []
-for month,year,day in zip(pfile['month'], pfile['year'], pfile['day']):
+##############################
+#Create the dateplot variables
+##############################
+for month,year,day in zip(daily_file['month'], daily_file['year'], daily_file['day']):
         dateplot.append(dt.datetime(year=int(year), month=int(month), day=int(day)))
+daily_file['dateplotx'] = [dt.datetime(year=d.year, month=d.month, day=d.day) for d in daily_file['ind']]
+        
+
 #build date time frame for monthly
 for month,year,day in zip(test4['month'], test4['year'], test4['day']):
         dateplot2.append(dt.datetime(year=int(year), month=int(month), day=int(day)))       
+daily_file['dateplotx'] = [dt.datetime(year=d.year, month=d.month, day=d.day) for d in daily_file['ind']]
+
+
+
+
+   
 
 #This is to convert everything into an array and to check the frequency
-s1 = [float(x) for x in pfile['gs_ratio']]
-s2 = [float(x) for x in pfile['go_ratio']]
-s3 = [float(x) for x in test4['ma6tax']]
-s4 = [float(x) for x in test4['ma6spval']]
+s1 = [float(x) for x in daily_file['Gold Silver Ratio']]
+s2 = [float(x) for x in daily_file['Gold Oil Ratio']]
+#s3 = [float(x) for x in test4['ma6tax']]
+#s4 = [float(x) for x in test4['ma6spval']]
 #s5 = [float(x) for x in afile['Ind_Close']]
 #s6 = [float(x) for x in afile['ma10_150_delta']]
 #s7 = [float(x) for x in afile['ma10_40_delta']]
 #s8 = [float(x) for x in afile['ma10_ad10']]
 s1=np.array(s1)
 s2=np.array(s2)
-s3=np.array(s3)
-s4=np.array(s4)
+#s3=np.array(s3)
+#s4=np.array(s4)
 #s5=np.array(s5)
 #s6=np.array(s6)
 #s7=np.array(s7)
@@ -121,14 +146,14 @@ s4=np.array(s4)
 dateplot=np.array(dateplot)
 print('s1 - ' + str(len(s1)))
 print('s2 - ' + str(len(s2)))
-print('s3 - ' + str(len(s3)))
-print('s4 - ' + str(len(s4)))
+#print('s3 - ' + str(len(s3)))
+#print('s4 - ' + str(len(s4)))
 #print('s5 - ' + str(len(s5)))
 #print('s6 - ' + str(len(s6)))
 #print('s7 - ' + str(len(s7)))
 #print('s8 - ' + str(len(s8)))
 print('dateplot - ' + str(len(dateplot)))
-print('dateplot2 - ' + str(len(dateplot2)))
+#print('dateplot2 - ' + str(len(dateplot2)))
 
 fig = plt.figure(figsize=(20,15))
 #As soon as graph1 is initialized, everything below the block is included until another graph is initialized
@@ -278,3 +303,4 @@ graph8.tick_params('y', colors='r')
 graph8.set_ylabel('Index Close')
 graph8.plot(dateplot,s5,'r-', linewidth=0.5)
 plt.show
+
