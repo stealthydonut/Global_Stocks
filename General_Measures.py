@@ -22,8 +22,12 @@ oil = quandl.get("OPEC/ORB")
 uranium = quandl.get("ODA/PURAN_USD")
 ustax = quandl.get("FMSTREAS/MTS")
 shiller = quandl.get("MULTPL/SHILLER_PE_RATIO_MONTH")
-
-
+paladium = quandl.get("LPPM/PALL")
+platinum = quandl.get("LPPM/PLAT")
+balticdryindex = quandl.get("LLOYDS/BDI")
+balticcapesizeindex = quandl.get("LLOYDS/BCI") #>150k DWT
+balticsupramexindex = quandl.get("LLOYDS/BSI") #50-60k DWT
+balticpanamaxindex = quandl.get("LLOYDS/BPI") #65-80k DWT
 ######################
 #Clean up Column Names
 ######################
@@ -34,17 +38,27 @@ shiller.columns=['Shiller Value']
 ustax.columns=['US Receipts','US Outlays','US Deficit/Surplus (-)','US Borrowing from the Public','USReduction of Operating Cash','US By Other Means']
 ism.columns=['ISM % Too High','ISM % About Right','ISM % Too Low','ISM Diffusion Index']
 uranium.columns=['Uranium Value']
+platinum.columns=['Platinum USD (AM)','Platinum USD (PM)','Platinum GBP (AM)','Platinum GBP (PM)','Platinum EURO (AM)','Platinum EURO (PM)']
+paladium.columns=['Paladium USD (AM)','Paladium USD (PM)','Paladium GBP (AM)','Paladium GBP (PM)','Paladium EURO (AM)','Paladium EURO (PM)']
+balticdryindex.columns=['balticdryindex Index']
+balticcapesizeindex.columns=['balticcapesizeindex Index']
+balticsupramexindex.columns=['balticsupramexindex Index']
+balticpanamaxindex.columns=['balticpanamaxindex Index']
 #################
 #Index Generation
 #################
 gold['ind']=gold.index
 silver['ind']=silver.index
 oil['ind']=oil.index
+paladium['ind']=paladium.index
+platinum['ind']=platinum.index   
 ###########################
 #Merge daily files together
 ###########################
 df=gold.merge(silver, on='ind', how='outer')
-daily_file=df.merge(oil, on='ind', how='outer')
+df1=df.merge(paladium, on='ind', how='outer')
+df2=df1.merge(platinum, on='ind', how='outer')
+daily_file=df2.merge(oil, on='ind', how='outer')
 #################################
 #Merge the monthly files together
 #################################
