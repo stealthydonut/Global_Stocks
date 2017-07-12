@@ -4,7 +4,7 @@
 import urllib
 import pandas as pd
 #sudo -H pip install six==1.10.0
-sudo -H pip install html5lib==1.0b8
+#sudo -H pip install html5lib==1.0b8
 #sudo pip install beautifulsoup4
 import html5lib
 #import beautifulsoup4
