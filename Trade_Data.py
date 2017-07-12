@@ -12,9 +12,9 @@ else:
 ############################
 from google.cloud import storage
 client = storage.Client()
-bucket = client.get_bucket('oiltrade')
+bucket = client.get_bucket('mastfiles')
 # Then do other things...
-blob = bucket.get_blob('oil_debtload.csv')
+blob = bucket.get_blob('Trade_Position.csv')
 content = blob.download_as_string()
 #Because the pandas dataframe can only read from buffers or files, we need to take the string and put it into a buffer
 inMemoryFile = StringIO.StringIO()
