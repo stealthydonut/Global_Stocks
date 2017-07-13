@@ -57,6 +57,7 @@ daily_prices['Mkt Cap']=daily_prices['Previous Close']*daily_prices['Float Share
 #merge the original file back into the current file
 outputfile=pd.merge(daily_prices, details, how='left', left_on=['Ticker'], right_on=['Ticker'])
 outputfile['Debt Ratio']=outputfile['Total Debt']/outputfile['Mkt Cap']
+outputfile['% Cons Low']=(outputfile['Previous Close']-outputfile['Cons Low'])/outputfile['Cons Low']
 
 #Put the dataset back into storage
 from google.cloud import storage
