@@ -52,7 +52,7 @@ for i in df2:
         data['ticker']= i
         #need to convert this file so can read the date
         data['dates']=pd.to_datetime(data['Date'], errors='coerce')
-        data['date']=pd.to_datetime(data['Date'], errors='coerce')
+        data['date_clean']=pd.to_datetime(data['Date'], errors='coerce')
         data.sort_values('date',ascending=True, inplace=True)
         data['close_lag1']=data['Close'].shift(1)
         data['changepos']=np.where(data['Close']>data['close_lag1'], 1, 0)
