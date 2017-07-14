@@ -60,6 +60,7 @@ outputfile['Debt Ratio']=outputfile['Total Debt']/outputfile['Mkt Cap']
 outputfile['% Cons Low']=(outputfile['Previous Close']-outputfile['Cons Low'])/outputfile['Cons Low']
 outputfile['Vol Amt']=outputfile['52 High']-outputfile['52 Low']
 outputfile['Vol %']=outputfile['Vol Amt']/outputfile['Previous Close']
+outputfile['% From Trade']=(outputfile['Previous Close']-outputfile['Price'])/outputfile['Price']
 
 #Put the dataset back into storage
 from google.cloud import storage
