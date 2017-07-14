@@ -28,6 +28,8 @@ balticdryindex = quandl.get("LLOYDS/BDI")
 balticcapesizeindex = quandl.get("LLOYDS/BCI") #>150k DWT
 balticsupramexindex = quandl.get("LLOYDS/BSI") #50-60k DWT
 balticpanamaxindex = quandl.get("LLOYDS/BPI") #65-80k DWT
+trade_Weigted_Index = quandl.get("FRED/TWEXBPA")
+fed_funds_rate = quandl.get("FED/RIFSPFF_N_M")
 ######################
 #Clean up Column Names
 ######################
