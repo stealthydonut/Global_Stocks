@@ -30,6 +30,9 @@ balticsupramexindex = quandl.get("LLOYDS/BSI") #50-60k DWT
 balticpanamaxindex = quandl.get("LLOYDS/BPI") #65-80k DWT
 trade_Weigted_Index = quandl.get("FRED/TWEXBPA")
 fed_funds_rate = quandl.get("FED/RIFSPFF_N_M")
+#libor3mth
+#fx rates
+#aud/cad RBA/FXRCD
 ######################
 #Clean up Column Names
 ######################
