@@ -9,8 +9,8 @@ if sys.version_info[0] < 3:
     from StringIO import StringIO as stio
 else:
     from io import StringIO as stio
-import matplotlib
-import matplotlib.pyplot as plt
+#import matplotlib
+#import matplotlib.pyplot as plt
 quandl.ApiConfig.api_key = 'BVno6pBYgcEvZJ6uctTr'
 ####################
 #Get the Quandl Data
@@ -30,9 +30,10 @@ balticsupramexindex = quandl.get("LLOYDS/BSI") #50-60k DWT
 balticpanamaxindex = quandl.get("LLOYDS/BPI") #65-80k DWT
 trade_Weigted_Index = quandl.get("FRED/TWEXBPA")
 fed_funds_rate = quandl.get("FED/RIFSPFF_N_M")
+fxaudusd = quandl.get("RBA/FXRUSD")
+fxaudcad = quandl.get("RBA/FXRCD")
 #libor3mth
-#fx rates
-#aud/cad RBA/FXRCD
+
 ######################
 #Clean up Column Names
 ######################
@@ -49,6 +50,8 @@ balticdryindex.columns=['balticdryindex Index']
 balticcapesizeindex.columns=['balticcapesizeindex Index']
 balticsupramexindex.columns=['balticsupramexindex Index']
 balticpanamaxindex.columns=['balticpanamaxindex Index']
+fxaudusd.columns=['aud/usd']
+fxaudcad.columns=['aud/cad']
 #################
 #Index Generation
 #################
@@ -56,14 +59,18 @@ gold['ind']=gold.index
 silver['ind']=silver.index
 oil['ind']=oil.index
 paladium['ind']=paladium.index
-platinum['ind']=platinum.index   
+platinum['ind']=platinum.index  
+fxaudusd['ind']=fxaudusd.index
+fxaudcad['ind']=fxaudcad.index
 ###########################
 #Merge daily files together
 ###########################
 df=gold.merge(silver, on='ind', how='outer')
 df1=df.merge(paladium, on='ind', how='outer')
 df2=df1.merge(platinum, on='ind', how='outer')
-daily_file=df2.merge(oil, on='ind', how='outer')
+df3=df2.merge(fxaudusd, on='ind', how='outer')
+df4=df3.merge(fxaudcad, on='ind', how='outer')
+daily_file=df4.merge(oil, on='ind', how='outer')
 #################################
 #Merge the monthly files together
 #################################
