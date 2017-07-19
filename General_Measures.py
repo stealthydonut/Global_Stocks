@@ -30,8 +30,8 @@ balticsupramexindex = quandl.get("LLOYDS/BSI") #50-60k DWT
 balticpanamaxindex = quandl.get("LLOYDS/BPI") #65-80k DWT
 trade_Weigted_Index = quandl.get("FRED/TWEXBPA")
 fed_funds_rate = quandl.get("FED/RIFSPFF_N_M")
-fxaudusd = quandl.get("RBA/FXRUSD")
-fxaudcad = quandl.get("RBA/FXRCD")
+fxusdcad = quandl.get("FRED/DEXCAUS")
+fxusdyuan = quandl.get("FRED/DEXCHUS")
 #libor3mth
 
 ######################
@@ -50,8 +50,8 @@ balticdryindex.columns=['balticdryindex Index']
 balticcapesizeindex.columns=['balticcapesizeindex Index']
 balticsupramexindex.columns=['balticsupramexindex Index']
 balticpanamaxindex.columns=['balticpanamaxindex Index']
-fxaudusd.columns=['aud/usd']
-fxaudcad.columns=['aud/cad']
+fxusdcad.columns=['cad/usd']
+fxusdyuan.columns=['yuan/usd']
 #################
 #Index Generation
 #################
@@ -60,16 +60,16 @@ silver['ind']=silver.index
 oil['ind']=oil.index
 paladium['ind']=paladium.index
 platinum['ind']=platinum.index  
-fxaudusd['ind']=fxaudusd.index
-fxaudcad['ind']=fxaudcad.index
+fxusdcad['ind']=fxusdcad.index
+fxusdyuan['ind']=fxusdyuan.index
 ###########################
 #Merge daily files together
 ###########################
 df=gold.merge(silver, on='ind', how='outer')
 df1=df.merge(paladium, on='ind', how='outer')
 df2=df1.merge(platinum, on='ind', how='outer')
-df3=df2.merge(fxaudusd, on='ind', how='outer')
-df4=df3.merge(fxaudcad, on='ind', how='outer')
+df3=df2.merge(fxusdcad, on='ind', how='outer')
+df4=df3.merge(fxusdyuan, on='ind', how='outer')
 daily_file=df4.merge(oil, on='ind', how='outer')
 #################################
 #Merge the monthly files together
@@ -108,6 +108,14 @@ monthly_file['ma6 ISM Diffusion Index'] = monthly_file['ISM Diffusion Index'].ro
 daily_file['Gold Silver Ratio']=daily_file['Gold USD (PM)']/daily_file['Silver USD']
 daily_file['Gold Oil Ratio']=daily_file['Gold USD (PM)']/daily_file['Oil USD']
 daily_file['Silver Oil Ratio']=daily_file['Silver USD']/daily_file['Oil USD']
+daily_file['Gold_CAD']=daily_file['Gold USD (PM)']*daily_file['cad/usd']
+daily_file['Gold_YUAN']=daily_file['Gold USD (PM)']*daily_file['yuan/usd']
+daily_file['Gold_Total']=daily_file['Gold_CAD']+daily_file['Gold_YUAN']
+
+
+
+
+
 ####################################
 #Clean up monthly file to be plotted
 ####################################
