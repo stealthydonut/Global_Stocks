@@ -32,6 +32,15 @@ trade_Weigted_Index = quandl.get("FRED/TWEXBPA")
 fed_funds_rate = quandl.get("FED/RIFSPFF_N_M")
 fxusdcad = quandl.get("FRED/DEXCAUS")
 fxusdyuan = quandl.get("FRED/DEXCHUS")
+fxusdjap = quandl.get("FRED/DEXJPUS")
+fxusdind = quandl.get("FRED/DEXINUS")
+fxusdbra = quandl.get("FRED/DEXBZUS")
+fxusdsko = quandl.get("FRED/DEXKOUS")
+fxusdaud = quandl.get("FRED/DEXUSAL")
+fxusdmex = quandl.get("FRED/DEXMXUS")
+fxusdche = quandl.get("FRED/DEXSZUS")
+fxusdeur = quandl.get("FED/RXI_US_N_B_EU")
+
 #US Reserves
 res_ru = quandl.get("BANKRUSSIA/RESRV")
 res_ca = quandl.get("FRED/TRESEGCAM052N")
@@ -58,6 +67,14 @@ balticsupramexindex.columns=['balticsupramexindex Index']
 balticpanamaxindex.columns=['balticpanamaxindex Index']
 fxusdcad.columns=['cad/usd']
 fxusdyuan.columns=['yuan/usd']
+fxusdjap.columns=['jap/usd']
+fxusdind.columns=['ind/usd']
+fxusdbra.columns=['bra/usd']
+fxusdsko.columns=['sko/usd']
+fxusdaud.columns=['aud/usd']
+fxusdmex.columns=['mex/usd']
+fxusdche.columns=['che/usd']
+fxusdeur.columns=['eur/usd']
 #################
 #Index Generation
 #################
@@ -68,6 +85,14 @@ paladium['ind']=paladium.index
 platinum['ind']=platinum.index  
 fxusdcad['ind']=fxusdcad.index
 fxusdyuan['ind']=fxusdyuan.index
+fxusdjap['ind']=fxusdjap.index
+fxusdind['ind']=fxusdind.index
+fxusdbra['ind']=fxusdbra.index
+fxusdsko['ind']=fxusdsko.index
+fxusdaud['ind']=fxusdaud.index
+fxusdmex['ind']=fxusdmex.index
+fxusdche['ind']=fxusdche.index
+fxusdeur['ind']=fxusdeur.index         
 ###########################
 #Merge daily files together
 ###########################
@@ -76,7 +101,15 @@ df1=df.merge(paladium, on='ind', how='outer')
 df2=df1.merge(platinum, on='ind', how='outer')
 df3=df2.merge(fxusdcad, on='ind', how='outer')
 df4=df3.merge(fxusdyuan, on='ind', how='outer')
-daily_file=df4.merge(oil, on='ind', how='outer')
+df5=df4.merge(fxusdjap, on='ind', how='outer')
+df6=df5.merge(fxusdind, on='ind', how='outer')
+df7=df6.merge(fxusdbra, on='ind', how='outer')
+df8=df7.merge(fxusdsko, on='ind', how='outer')
+df9=df8.merge(fxusdaud, on='ind', how='outer')
+df10=df9.merge(fxusdmex, on='ind', how='outer')
+df11=df10.merge(fxusdche, on='ind', how='outer')
+df12=df11.merge(fxusdeur, on='ind', how='outer')
+daily_file=df12.merge(oil, on='ind', how='outer')
 #################################
 #Merge the monthly files together
 #################################
@@ -116,7 +149,18 @@ daily_file['Gold Oil Ratio']=daily_file['Gold USD (PM)']/daily_file['Oil USD']
 daily_file['Silver Oil Ratio']=daily_file['Silver USD']/daily_file['Oil USD']
 daily_file['Gold_CAD']=daily_file['Gold USD (PM)']*daily_file['cad/usd']
 daily_file['Gold_YUAN']=daily_file['Gold USD (PM)']*daily_file['yuan/usd']
-daily_file['Gold_Total']=daily_file['Gold_CAD']+daily_file['Gold_YUAN']
+daily_file['Gold_JAP']=daily_file['Gold USD (PM)']*daily_file['jap/usd']
+daily_file['Gold_IND']=daily_file['Gold USD (PM)']*daily_file['ind/usd']
+daily_file['Gold_BRA']=daily_file['Gold USD (PM)']*daily_file['bra/usd']
+daily_file['Gold_SKO']=daily_file['Gold USD (PM)']*daily_file['sko/usd']
+daily_file['Gold_AUD']=daily_file['Gold USD (PM)']*daily_file['aud/usd']
+daily_file['Gold_MEX']=daily_file['Gold USD (PM)']*daily_file['mex/usd']
+daily_file['Gold_CHE']=daily_file['Gold USD (PM)']*daily_file['che/usd']
+daily_file['Gold_EUR']=daily_file['Gold USD (PM)']*daily_file['eur/usd']
+daily_file['Gold_Total']=daily_file['Gold_CAD']+daily_file['Gold_YUAN']+daily_file['Gold_JAP']+daily_file['Gold_IND']+daily_file['Gold_BRA']+daily_file['Gold_SKO']+daily_file['Gold_AUD']+daily_file['Gold_MEX']+daily_file['Gold_CHE']+daily_file['Gold_EUR']
+
+
+
 
    
         
