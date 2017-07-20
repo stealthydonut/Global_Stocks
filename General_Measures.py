@@ -159,6 +159,15 @@ daily_file['Gold_CHE']=daily_file['Gold USD (PM)']*daily_file['che/usd']
 daily_file['Gold_EUR']=daily_file['Gold USD (PM)']*daily_file['eur/usd']
 daily_file['Gold_Total']=daily_file['Gold_CAD']+daily_file['Gold_YUAN']+daily_file['Gold_JAP']+daily_file['Gold_IND']+daily_file['Gold_BRA']+daily_file['Gold_SKO']+daily_file['Gold_AUD']+daily_file['Gold_MEX']+daily_file['Gold_CHE']+daily_file['Gold_EUR']
 
+#Develop the reserve file
+res_ru['Country']='RU'
+res_ru['ind']=res_ru.index
+res_jp['Country']='JP'
+res_jp['ind']=res_jp.index
+res_ca['Country']='CA'
+res_ca['ind']=res_ca.index
+bigdata = res_ru.append(res_jp, ignore_index=True)
+
 
 
 
