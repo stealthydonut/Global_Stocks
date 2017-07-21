@@ -329,7 +329,30 @@ bigdata2.__delitem__('country2_y')
 bigdata3=pd.merge(bigdata2, reserve, left_on='country', right_on='country')
 bigdata3['date']=pd.to_datetime(bigdata3['date_y'], errors='coerce')
 bigdata3['monthyear'] = bigdata3['date'].dt.strftime("%m%y")
+
+countrylist=bigdata3['country']
+cc=countrylist.drop_duplicates()
+
+for i in cc:
+    bigdata3['FXlagq']=bigdata3['FX Reserve'].shift(1)
+    bigdata3['FXlagy']=bigdata3['FX Reserve'].shift(4)
+    bigdata3['GLDlagq']=bigdata3['Gold Tonnes'].shift(1)
+    bigdata3['GLDlagy']=bigdata3['Gold Tonnes'].shift(4)
+
+
+
+print bigdata3
+
+dfile = bigdata3.groupby(['country','monthyear'], as_index=False)['Gold Tonnes','FX Reserve'] 
+
+print dfile.dtype
+
+print countrylist
+
+print bigdata3
 print bigdata3.dtypes
+
+
 
 
 
@@ -338,3 +361,4 @@ print bigdata3.dtypes
 
 
 bigdata3.to_csv('C:\Python27\gold_reserve.csv', index=False)
+
