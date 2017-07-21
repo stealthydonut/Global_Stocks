@@ -327,6 +327,9 @@ bigdata2.__delitem__('countryx')
 bigdata2.__delitem__('country2_y')
 
 bigdata3=pd.merge(bigdata2, reserve, left_on='country', right_on='country')
+bigdata3['date']=pd.to_datetime(bigdata3['date_y'], errors='coerce')
+bigdata3['monthyear'] = bigdata3['date'].dt.strftime("%m%y")
+print bigdata3.dtypes
 
 
 
