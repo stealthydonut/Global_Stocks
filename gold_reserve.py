@@ -348,8 +348,17 @@ for i in cc:
     bigdata3['cnt']=1
 
 
-dfile= bigdata3.groupby(['monthyear'], as_index=False)['GLDchange_qoverq','GLDchange_yovery','FXchange_qoverq','FXchange_yovery'].sum()
+#Build General Measures for the dataset
+bigdata3['GLDchange_yovery_negfl'] = np.where(bigdata3['GLDchange_yovery']<0, 1, 0)
+bigdata3['FXchange_yovery_negfl'] = np.where(bigdata3['FXchange_yovery']<0, 1, 0)
+bigdata3['GLDchange_yovery_posfl'] = np.where(bigdata3['GLDchange_yovery']>0, 1, 0)
+bigdata3['FXchange_yovery_posfl'] = np.where(bigdata3['FXchange_yovery']>0, 1, 0)
+
+dfile= bigdata3.groupby(['monthyear'], as_index=False)['GLDchange_qoverq','GLDchange_yovery','FXchange_qoverq','FXchange_yovery','cnt','GLDchange_yovery_negfl','FXchange_yovery_negfl',\
+'FXchange_yovery_posfl','GLDchange_yovery_posfl'].sum()
 print dfile
+
+print bigdata3.dtypes
 
 print bigdata3.dtypes
 
