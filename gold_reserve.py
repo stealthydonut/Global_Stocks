@@ -326,38 +326,35 @@ bigdata2.__delitem__('country2_x')
 bigdata2.__delitem__('countryx')
 bigdata2.__delitem__('country2_y')
 
-bigdata3=pd.merge(bigdata2, reserve, left_on='country', right_on='country')
-bigdata3['date']=pd.to_datetime(bigdata3['date_y'], errors='coerce')
-bigdata3['monthyear'] = bigdata3['date'].dt.strftime("%m%y")
-
+bigdata3=pd.merge(bigdata2, reserve,how='left',  left_on=['country','date'], right_on=['country','date'])
+bigdata3['dategold']=pd.to_datetime(bigdata3['date'], errors='coerce')
+bigdata3['monthyear'] = bigdata3['dategold'].dt.strftime("%m%y")
+bigdata3['fxamount'] = bigdata3.loc[bigdata3['fxamount'].index, 'fxamount'].map(lambda x: x.replace(',','0'))
+bigdata3['FX Reserve2']=pd.to_numeric(bigdata3['fxamount'], errors='coerce')
+bigdata3['Gold Tonnes2']=pd.to_numeric(bigdata3['Gold Tonnes'], errors='coerce')    
+#Build a unique list to iterate through countries
 countrylist=bigdata3['country']
 cc=countrylist.drop_duplicates()
 
 for i in cc:
-    bigdata3['FXlagq']=bigdata3['FX Reserve'].shift(1)
-    bigdata3['FXlagy']=bigdata3['FX Reserve'].shift(4)
-    bigdata3['GLDlagq']=bigdata3['Gold Tonnes'].shift(1)
-    bigdata3['GLDlagy']=bigdata3['Gold Tonnes'].shift(4)
+    bigdata3['FXlagq']=bigdata3['FX Reserve2'].shift(1)
+    bigdata3['FXlagy']=bigdata3['FX Reserve2'].shift(4)
+    bigdata3['FXchange_qoverq']=bigdata3['FX Reserve2']-bigdata3['FXlagq']
+    bigdata3['FXchange_yovery']=bigdata3['FX Reserve2']-bigdata3['FXlagy']
+    bigdata3['GLDlagq']=bigdata3['Gold Tonnes2'].shift(1)
+    bigdata3['GLDlagy']=bigdata3['Gold Tonnes2'].shift(4)
+    bigdata3['GLDchange_qoverq']=bigdata3['Gold Tonnes2']-bigdata3['GLDlagq']
+    bigdata3['GLDchange_yovery']=bigdata3['Gold Tonnes2']-bigdata3['GLDlagy']
+    bigdata3['cnt']=1
 
 
+dfile= bigdata3.groupby(['monthyear'], as_index=False)['GLDchange_qoverq','GLDchange_yovery','FXchange_qoverq','FXchange_yovery'].sum()
+print dfile
 
-print bigdata3
-
-dfile = bigdata3.groupby(['country','monthyear'], as_index=False)['Gold Tonnes','FX Reserve'] 
-
-print dfile.dtype
-
-print countrylist
-
-print bigdata3
 print bigdata3.dtypes
 
 
 
-
-
-#test=bigdata2.sort('country').drop_duplicates(subset=['country', 'cc'], take_last=True)
-#print test
 
 
 bigdata3.to_csv('C:\Python27\gold_reserve.csv', index=False)
