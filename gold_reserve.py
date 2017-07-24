@@ -1,8 +1,9 @@
 #This script takes data from the world gold council and with simple transformation calculates the
 
-import pandas
-gold_df = pandas.read_csv("C:/Users/davking/Desktop/Python/gold.csv")
-res_df = pandas.read_csv("C:/Users/davking/Desktop/Python/res.csv")
+import pandas as pd
+import numpy as np
+gold_df = pd.read_csv("C:/Users/davking/Desktop/Python/gold.csv")
+res_df = pd.read_csv("C:/Users/davking/Desktop/Python/res.csv")
 print res_df
 
 #Generates the Gold Reserves for Each Country 
@@ -43,7 +44,51 @@ for i in colist:
     df['country']=df['country2'].str.upper()
     reserve = reserve.append(df, ignore_index=False)
 
-    
+print boplist
+import quandl as qd
+#Get the quandl API key
+qd.ApiConfig.api_key = 'BVno6pBYgcEvZJ6uctTr'
+#Use a list to generate a dataset
+boplist =['Afghanistan','USCENSUS/IE_5310','AF'],['Albania','USCENSUS/IE_4810','AL'],['Algeria','USCENSUS/IE_7210','DZ'],['Andorra','USCENSUS/IE_4271','AD'],['Angola','USCENSUS/IE_7620','AO'],['Anguilla','USCENSUS/IE_2481','AI'],['Antigua and Barbuda','USCENSUS/IE_2484','AG'],['Argentina','USCENSUS/IE_3570','AR'],\
+['Armenia','USCENSUS/IE_4631','AM'],['Aruba','USCENSUS/IE_2779','AW'],['Australia','USCENSUS/IE_6021','AU'],['Austria','USCENSUS/IE_4330','AT'],['Azerbaijan','USCENSUS/IE_4632','AZ'],['Bahamas','USCENSUS/IE_2360','BS'],\
+['Bahrain','USCENSUS/IE_5250','BH'],['Bangladesh','USCENSUS/IE_5380','BD'],['Barbados','USCENSUS/IE_2720','BB'],['Belarus','USCENSUS/IE_4622','BY'],['Belgium','USCENSUS/IE_4231','BE'],\
+['Belize','USCENSUS/IE_2080','BZ'],['Benin','USCENSUS/IE_7610','BJ'],['Bhutan','USCENSUS/IE_5682','BT'],['Bolivia','USCENSUS/IE_3350','BO'],['Bosnia','USCENSUS/IE_4793','BA'],['Botswana','USCENSUS/IE_7930','BW'],['Brazil','USCENSUS/IE_3510','BR'],['British Virgin Islands','USCENSUS/IE_2482','VG'],\
+['Bulgaria','USCENSUS/IE_4870','BG'],['Burkina Faso','USCENSUS/IE_7600','BF'],['Burma','USCENSUS/IE_5460','MM'],['Burundi','USCENSUS/IE_7670','BI'],['Cambodia','USCENSUS/IE_5550','KH'],['Cameroon','USCENSUS/IE_7420','CM'],['Canada','USCENSUS/IE_1220','CA'],\
+['Cape Verde','USCENSUS/IE_7643','CV'],['Cayman Islands','USCENSUS/IE_2440','CY'],['Central African Republic','USCENSUS/IE_7540','CF'],['Chad','USCENSUS/IE_7560','TD'],['Chile','USCENSUS/IE_3370','CL'],['China','USCENSUS/IE_5700','CN'],['Colombia','USCENSUS/IE_3010','CO'],['Comoros','USCENSUS/IE_7890','KM'],\
+['Congo','USCENSUS/IE_7630','CD'],['Costa Rica','USCENSUS/IE_2230','CR'],['Cote dIvoire','USCENSUS/IE_7480','CI'],['Croatia','USCENSUS/IE_4791','HR'],['Cuba','USCENSUS/IE_2390','CU'],['Cyprus','USCENSUS/IE_4910','CY'],['Czech Republic','USCENSUS/IE_4351','CZ'],\
+['Denmark','USCENSUS/IE_4099','DK'],['Dijbouti','USCENSUS/IE_7770','DJ'],['Dominca','USCENSUS/IE_2486','DM'],['Domincan Republic','USCENSUS/IE_2470','DO'],['Ecuador','USCENSUS/IE_3310','EC'],['Egypt','USCENSUS/IE_7290','EG'],['El Salvador','USCENSUS/IE_2110','ES'],['Equatorial','USCENSUS/IE_7380','Country'],\
+['Eritrea','USCENSUS/IE_7741','ER'],['Estonia','USCENSUS/IE_4470','ES'],['Ethiopia','USCENSUS/IE_7749','ET'],['Fiji','USCENSUS/IE_6863','FJ'],['Finland','USCENSUS/IE_4050','FI'],['France','USCENSUS/IE_4279','FR'],['Gabon','USCENSUS/IE_7550','GA'],['Gambia','USCENSUS/IE_7500','GM'],['Georgia','USCENSUS/IE_4633','GE'],['Germany','USCENSUS/IE_4280','DE'],\
+['Ghana','USCENSUS/IE_7490','GH'],['Greece','USCENSUS/IE_4840','GR'],['Grenada','USCENSUS/IE_2489','GD'],['Guatemala','USCENSUS/IE_2050','GT'],['Guinea  ','USCENSUS/IE_7460','GN'],['Guinea-Bissau','USCENSUS/IE_7642','GW'],['Guyana','USCENSUS/IE_3120','GY'],['Haiti','USCENSUS/IE_2450','HT'],['Honduras','USCENSUS/IE_2150','HN'],\
+['Hong Kong','USCENSUS/IE_5820','HK'],['Hungary','USCENSUS/IE_4370','HU'],['Iceland','USCENSUS/IE_4000','IS'],['India','USCENSUS/IE_5330','IN'],['Indonesia','USCENSUS/IE_5600','ID'],['Iran','USCENSUS/IE_5070','IR'],['Iraq','USCENSUS/IE_5050','IQ'],\
+['Ireland','USCENSUS/IE_4190','IE'],['Israel','USCENSUS/IE_5081','IL'],['Italy','USCENSUS/IE_4759','IT'],['Jamaica','USCENSUS/IE_2410','JM'],['Japan','USCENSUS/IE_5880','JP'],['Jordan','USCENSUS/IE_5110','JO'],['Kazakhastan','USCENSUS/IE_4634','KZ'],['Kenya','USCENSUS/IE_7790','KE'],['Kyrgyzstan','USCENSUS/IE_4635','KG'],['Laos','USCENSUS/IE_5530','LA'],\
+['Latvia','USCENSUS/IE_4490','LV'],['Lebanon','USCENSUS/IE_5040','LB'],['Lechtenstein','USCENSUS/IE_4411','LI'],['Lesotho','USCENSUS/IE_7990','LS'],['Liberia','USCENSUS/IE_7650','LR'],['Libya','USCENSUS/IE_7250','LY'],['Lithuania','USCENSUS/IE_4510','LT'],['Luxembourg','USCENSUS/IE_4239','LU'],\
+['Macedonia','USCENSUS/IE_4794','MK'],['Madagascar','USCENSUS/IE_7880','MG'],['Malawi','USCENSUS/IE_7970','MW'],['Malaysia','USCENSUS/IE_5570','MY'],['Maldives','USCENSUS/IE_5683','MV'],['Mali','USCENSUS/IE_7450','ML'],['Malta','USCENSUS/IE_4730','MT'],['Marshall Islands','USCENSUS/IE_6810','MH'],['Martinique','USCENSUS/IE_2839','MQ'],['Mauritania','USCENSUS/IE_7410','MR'],\
+['Mauritius','USCENSUS/IE_7850','MU'],['Mexico','USCENSUS/IE_2010','MX'],['Micronesia','USCENSUS/IE_6820','FM'],['Moldova','USCENSUS/IE_4641','MD'],['Monaco','USCENSUS/IE_4272','MC'],['Mongolia','USCENSUS/IE_5740','MN'],\
+['Montenegro','USCENSUS/IE_4804','ME'],['Morocco','USCENSUS/IE_7140','MA'],['Mozambique','USCENSUS/IE_7870','MZ'],['Namibia','USCENSUS/IE_7920','NA'],['Nauru','USCENSUS/IE_6862','NR'],['Nepal','USCENSUS/IE_5360','NP'],['Netherlands','USCENSUS/IE_4210','NL'],['New Zealand','USCENSUS/IE_6141','NZ'],['Nicaragua','USCENSUS/IE_2190','NI'],\
+['Niger','USCENSUS/IE_7510','NE'],['Nigeria','USCENSUS/IE_7530','NG'],['North Korea','USCENSUS/IE_5790','KP'],['Norway','USCENSUS/IE_4039','NO'],['Oman','USCENSUS/IE_5230','OM'],['Pakistan','USCENSUS/IE_5350','PK'],['Palau','USCENSUS/IE_6830','PW'],['Panama','USCENSUS/IE_2250','PA'],['Papau New Guinea','USCENSUS/IE_6040','PG'],['Paraguay','USCENSUS/IE_3530','PY'],\
+['Peru','USCENSUS/IE_3330','PE'],['Philippines','USCENSUS/IE_5650','PH'],['Poland','USCENSUS/IE_4550','PL'],['Portugal','USCENSUS/IE_4710','PT'],['Qatar','USCENSUS/IE_5180','QA'],['Romania','USCENSUS/IE_4850','RO'],['Russia','USCENSUS/IE_4621','RU'],\
+['Rwanda','USCENSUS/IE_7690','RW'],['Saint Kitts','USCENSUS/IE_2483','KN'],['Saint Vincent','USCENSUS/IE_2488','VC'],['Samoa','USCENSUS/IE_6150','WS'],['San Tome','USCENSUS/IE_7644','Country'],\
+['Saudi Arabia','USCENSUS/IE_5170','SA'],['Senegal','USCENSUS/IE_7440','SN'],['Serbia','USCENSUS/IE_4801','RS'],['Seychelles','USCENSUS/IE_7800','SC'],['Sierra Leone','USCENSUS/IE_7470','SL'],['Singapore','USCENSUS/IE_5590','SG'],\
+['Slovakia','USCENSUS/IE_4359','SK'],['Slovenia','USCENSUS/IE_4792','SI'],['Solomon Islands','USCENSUS/IE_6223','SB'],['Somalia','USCENSUS/IE_7700','SO'],['South Africa','USCENSUS/IE_7910','ZA'],['South Korea','USCENSUS/IE_5800','KR'],\
+['South Sudan','USCENSUS/IE_7323','SS'],['Spain','USCENSUS/IE_4700','ES'],['Sri Lanka','USCENSUS/IE_5420','LK'],['Sudan','USCENSUS/IE_7321','SD'],['Suriname','USCENSUS/IE_3150','SR'],\
+['Swaziland','USCENSUS/IE_7950','SZ'],['Sweden','USCENSUS/IE_4010','SE'],['Switzerland','USCENSUS/IE_4419','CH'],['Syria','USCENSUS/IE_5020','SY'],['Taiwan','USCENSUS/IE_5830','TW'],['Tajikistan','USCENSUS/IE_4642','TJ'],\
+['Tanzania','USCENSUS/IE_7830',''],['Thailand','USCENSUS/IE_5490','TH'],['Timor-Leste','USCENSUS/IE_5601','TL'],['Togo','USCENSUS/IE_7520','TG'],['Tonga','USCENSUS/IE_6864','TO'],['Trinidad','USCENSUS/IE_2740','TT'],\
+['Tunisia','USCENSUS/IE_7230','TN'],['Turkey','USCENSUS/IE_4890','TR'],['Turkmenistan','USCENSUS/IE_4643','TM'],['Turks and Caicos','USCENSUS/IE_2430','TC'],['Tuvalu','USCENSUS/IE_6227','TV'],['Uganda','USCENSUS/IE_7780','UG'],\
+['Ukraine','USCENSUS/IE_4623','UA'],['United Arab Emirates','USCENSUS/IE_5200','AE'],['United Kingdom','USCENSUS/IE_4120','GB'],['Uruguay','USCENSUS/IE_3550','UY'],['Uzbekistan','USCENSUS/IE_4644','UZ'],['Vanuatu','USCENSUS/IE_6224','VU'],\
+['Vatican City','USCENSUS/IE_4752','VA'],['Venezuela','USCENSUS/IE_3070','VE'],['Vietnam','USCENSUS/IE_5520','VN'],['Yemen','USCENSUS/IE_5210','YE'],['Zambia','USCENSUS/IE_7940','ZM'],['Zimbabwe','USCENSUS/IE_7960','ZW'],\
+['Kosovo','USCENSUS/IE_4803','XK'],['Kuwait','USCENSUS/IE_5130','KW']
+ 
+bopdata = pd.DataFrame()
+ 
+#Generate the dataframes based on the list
+for i in boplist:
+    test=qd.get(i[1]).copy(deep=True)
+    #Create a month/year variable   
+    test['country'] = i[2]
+    test['index1'] = test.index
+    test['monthyear'] = test['index1'].dt.strftime("%y%m")    
+    bopdata = bopdata.append(test, ignore_index=True)
+   
 #print reserve
 
 #del bigdata
@@ -328,7 +373,7 @@ bigdata2.__delitem__('country2_y')
 
 bigdata3=pd.merge(bigdata2, reserve,how='left',  left_on=['country','date'], right_on=['country','date'])
 bigdata3['dategold']=pd.to_datetime(bigdata3['date'], errors='coerce')
-bigdata3['monthyear'] = bigdata3['dategold'].dt.strftime("%m%y")
+bigdata3['monthyear'] = bigdata3['dategold'].dt.strftime("%y%m")
 bigdata3['fxamount'] = bigdata3.loc[bigdata3['fxamount'].index, 'fxamount'].map(lambda x: x.replace(',','0'))
 bigdata3['FX Reserve2']=pd.to_numeric(bigdata3['fxamount'], errors='coerce')
 bigdata3['Gold Tonnes2']=pd.to_numeric(bigdata3['Gold Tonnes'], errors='coerce')    
@@ -347,7 +392,6 @@ for i in cc:
     bigdata3['GLDchange_yovery']=bigdata3['Gold Tonnes2']-bigdata3['GLDlagy']
     bigdata3['cnt']=1
 
-
 #Build General Measures for the dataset
 bigdata3['GLDchange_yovery_negfl'] = np.where(bigdata3['GLDchange_yovery']<0, 1, 0)
 bigdata3['FXchange_yovery_negfl'] = np.where(bigdata3['FXchange_yovery']<0, 1, 0)
@@ -360,11 +404,12 @@ print dfile
 
 print bigdata3.dtypes
 
-print bigdata3.dtypes
 
 
 
+
+#test=bigdata2.sort('country').drop_duplicates(subset=['country', 'cc'], take_last=True)
+#print test
 
 
 bigdata3.to_csv('C:\Python27\gold_reserve.csv', index=False)
-
