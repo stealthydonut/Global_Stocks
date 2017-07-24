@@ -28,6 +28,7 @@ for i in colist:
     ticker=''.join(i[0])   
     df = gold_df[['Unnamed: 0',ticker]]
     df.columns=['countryx','gold amount']
+    df['quarter']=''.join(i[0])
     df['date']=''.join(i[1])
     df['Gold Tonnes'] = df.loc[df['gold amount'].index, 'gold amount'].map(lambda x: x.replace('-','0'))
     df['country2'] = df.loc[df['countryx'].index, 'countryx'].map(lambda x: x.replace(')',''))
@@ -38,13 +39,14 @@ for i in colist:
     ticker=''.join(i[0])   
     df = res_df[['Unnamed: 0',ticker]]
     df.columns=['countryx','fxamount']
+    df['quarter']=''.join(i[0])
     df['date']=''.join(i[1])
     df['FX Reserve'] = df.loc[df['fxamount'].index, 'fxamount'].map(lambda x: x.replace('-','0'))
     df['country2'] = df.loc[df['countryx'].index, 'countryx'].map(lambda x: x.replace(')',''))
     df['country']=df['country2'].str.upper()
     reserve = reserve.append(df, ignore_index=False)
 
-print boplist
+
 import quandl as qd
 #Get the quandl API key
 qd.ApiConfig.api_key = 'BVno6pBYgcEvZJ6uctTr'
@@ -406,9 +408,14 @@ bigdata2.__delitem__('country2_x')
 bigdata2.__delitem__('countryx')
 bigdata2.__delitem__('country2_y')
 
-bigdata3=pd.merge(bigdata2, reserve,how='left',  left_on=['country','date'], right_on=['country','date'])
+#print bigdata4.dtypes
+
+bigdata3x=pd.merge(bigdata2, reserve,how='left',  left_on=['country','date'], right_on=['country','date'])
+bigdata3=pd.merge(bopgold2, bigdata3,how='left',  left_on=['country','merge'], right_on=['cc','quarter_y'])
 bigdata3['dategold']=pd.to_datetime(bigdata3['date'], errors='coerce')
 bigdata3['monthyear'] = bigdata3['dategold'].dt.strftime("%y%m")
+
+print bigdata3.dtypes
 bigdata3['fxamount'] = bigdata3.loc[bigdata3['fxamount'].index, 'fxamount'].map(lambda x: x.replace(',','0'))
 bigdata3['FX Reserve2']=pd.to_numeric(bigdata3['fxamount'], errors='coerce')
 bigdata3['Gold Tonnes2']=pd.to_numeric(bigdata3['Gold Tonnes'], errors='coerce')    
