@@ -79,17 +79,52 @@ boplist =['Afghanistan','USCENSUS/IE_5310','AF'],['Albania','USCENSUS/IE_4810','
 ['Kosovo','USCENSUS/IE_4803','XK'],['Kuwait','USCENSUS/IE_5130','KW']
  
 bopdata = pd.DataFrame()
- 
-#Generate the dataframes based on the list
+##################################### 
+#Generate the balance of payment file
+#####################################
 for i in boplist:
     test=qd.get(i[1]).copy(deep=True)
     #Create a month/year variable   
     test['country'] = i[2]
     test['index1'] = test.index
-    test['monthyear'] = test['index1'].dt.strftime("%y%m")    
+    test['monthyear'] = test['index1'].dt.strftime("%y%m")  
+    test['year'] = test['index1'].dt.strftime("%Y") 
+    test['month'] = test['index1'].dt.strftime("%m")
     bopdata = bopdata.append(test, ignore_index=True)
-   
-#print reserve
+
+#####################################
+#Begin to break the files in quarters
+#####################################
+bopdata['monthnum']=pd.to_numeric(bopdata['month'], errors='coerce')
+bopdata['fl1'] = np.where(bopdata['monthnum']<4, 'Q1', 'no')
+bopdata['fl2'] = np.where((bopdata['monthnum']>3) & (bopdata['monthnum']<7), 'Q2', 'no')
+bopdata['fl3'] = np.where((bopdata['monthnum']>6) & (bopdata['monthnum']<10), 'Q3', 'no')
+bopdata['fl4'] = np.where(bopdata['monthnum']>9, 'Q4', 'no')
+q1=bopdata[bopdata['fl1']=='Q1']
+q1['merge']=q1['fl1']+" "+q1['year'].map(str)
+#Select only columns required
+q1gold=q1[['Exports','Imports','Balance','country','merge']]
+q2=bopdata[bopdata['fl2']=='Q2']
+q2['merge']=q2['fl2']+" "+q2['year'].map(str)
+#Select only columns required
+q2gold=q2[['Exports','Imports','Balance','country','merge']]
+q3=bopdata[bopdata['fl3']=='Q3']
+q3['merge']=q3['fl3']+" "+q3['year'].map(str)
+#Select only columns required
+q3gold=q3[['Exports','Imports','Balance','country','merge']]
+q4=bopdata[bopdata['fl4']=='Q4']
+q4['merge']=q4['fl4']+" "+q4['year'].map(str)
+#Select only columns required
+q4gold=q4[['Exports','Imports','Balance','country','merge']]
+
+
+gold1 = q1gold.append(q2gold, ignore_index=True)
+gold2 = q3gold.append(gold1, ignore_index=True)
+bopgold = q4gold.append(gold2, ignore_index=True)
+bopgold['cnt']=1
+bopgold2= bopgold.groupby(['country','merge'], as_index=False)['cnt','Exports','Imports','Balance'].sum()
+
+
 
 #del bigdata
 
