@@ -4,9 +4,13 @@ import pandas as pd
 import numpy as np
 gold_df = pd.read_csv("C:/Users/davking/Desktop/Python/gold.csv")
 res_df = pd.read_csv("C:/Users/davking/Desktop/Python/res.csv")
-print res_df
 
-#Generates the Gold Reserves for Each Country 
+#del bopdata
+#del reserve
+#del bigdata
+####################################################
+#Generates the Gold and FX Reserves for Each Country
+####################################################
 colist=[['Q1 2000','3/31/2000'],['Q2 2000','6/30/2000'],['Q3 2000','9/29/2000'],['Q4 2000','12/29/2000'],['Q1 2001','3/30/2001'],['Q2 2001','6/29/2001'],\
 ['Q3 2001','9/28/2001'],['Q4 2001','12/31/2001'],['Q1 2002','3/29/2002'],['Q2 2002','6/28/2002'],['Q3 2002','9/30/2002'],['Q4 2002','12/31/2002'],\
 ['Q1 2003','3/29/2003'],['Q2 2003','6/28/2003'],['Q3 2003','9/28/2003'],['Q4 2003','12/31/2003'],['Q1 2004','3/29/2004'],['Q2 2004','6/28/2004'],['Q3 2004','9/28/2004'],\
@@ -30,7 +34,8 @@ for i in colist:
     df.columns=['countryx','gold amount']
     df['quarter']=''.join(i[0])
     df['date']=''.join(i[1])
-    df['Gold Tonnes'] = df.loc[df['gold amount'].index, 'gold amount'].map(lambda x: x.replace('-','0'))
+    df['Gold Tonnex'] = df.loc[df['gold amount'].index, 'gold amount'].map(lambda x: x.replace('-','0'))
+    df['Gold Tonne'] = df.loc[df['Gold Tonnex'].index, 'Gold Tonnex'].map(lambda x: str(x).replace(',',''))
     df['country2'] = df.loc[df['countryx'].index, 'countryx'].map(lambda x: x.replace(')',''))
     df['country']=df['country2'].str.upper()
     bigdata = bigdata.append(df, ignore_index=False)
@@ -41,11 +46,19 @@ for i in colist:
     df.columns=['countryx','fxamount']
     df['quarter']=''.join(i[0])
     df['date']=''.join(i[1])
-    df['FX Reserve'] = df.loc[df['fxamount'].index, 'fxamount'].map(lambda x: x.replace('-','0'))
+    df['FX Reservex'] = df.loc[df['fxamount'].index, 'fxamount'].map(lambda x: x.replace('-','0'))
+    df['FX Reserve'] = df.loc[df['FX Reservex'].index, 'FX Reservex'].map(lambda x: str(x).replace(',',''))
     df['country2'] = df.loc[df['countryx'].index, 'countryx'].map(lambda x: x.replace(')',''))
     df['country']=df['country2'].str.upper()
     reserve = reserve.append(df, ignore_index=False)
 
+#del bopdata
+#del reserve
+#del bigdata
+
+######################################
+#Generates the U.S Balance of Payments
+######################################
 
 import quandl as qd
 #Get the quandl API key
@@ -126,9 +139,9 @@ bopgold = q4gold.append(gold2, ignore_index=True)
 bopgold['cnt']=1
 bopgold2= bopgold.groupby(['country','merge'], as_index=False)['cnt','Exports','Imports','Balance'].sum()
 
+#del bopgold2
+#print bopgold2
 
-
-#del bigdata
 
 cclist=[['AD','Andorra'],
 ['AE','United Arab Emirates'],
@@ -255,7 +268,6 @@ cclist=[['AD','Andorra'],
 ['KE','Kenya'],
 ['KG','Kyrgyz Republic'],
 ['KH','Cambodia'],
-['','Kyrgyz Republic'],
 ['KI','Kiribati'],
 ['KM','Comoros'],
 ['KN','Saint Kitts and Nevis'],
@@ -408,19 +420,21 @@ bigdata2.__delitem__('country2_x')
 bigdata2.__delitem__('countryx')
 bigdata2.__delitem__('country2_y')
 
-#print bigdata4.dtypes
-
 bigdata3x=pd.merge(bigdata2, reserve,how='left',  left_on=['country','date'], right_on=['country','date'])
-bigdata3=pd.merge(bopgold2, bigdata3,how='left',  left_on=['country','merge'], right_on=['cc','quarter_y'])
+bigdata3=pd.merge(bopgold2, bigdata3x,how='left',  left_on=['country','merge'], right_on=['cc','quarter_y'])
 bigdata3['dategold']=pd.to_datetime(bigdata3['date'], errors='coerce')
 bigdata3['monthyear'] = bigdata3['dategold'].dt.strftime("%y%m")
-
+bigdata3['FX Reserve2']=pd.to_numeric(bigdata3['FX Reserve'], errors='coerce')
+bigdata3['Gold Tonne2']=pd.to_numeric(bigdata3['Gold Tonne'], errors='coerce')    
+bigdata3[['country_x','Exports','Imports','Balance','merge','Gold Tonne','FX Reserve']]
+#Build sort key
 print bigdata3.dtypes
-bigdata3['fxamount'] = bigdata3.loc[bigdata3['fxamount'].index, 'fxamount'].map(lambda x: x.replace(',','0'))
-bigdata3['FX Reserve2']=pd.to_numeric(bigdata3['fxamount'], errors='coerce')
-bigdata3['Gold Tonnes2']=pd.to_numeric(bigdata3['Gold Tonnes'], errors='coerce')    
+
+print bigdata3
+result=tax_reciept.sort_index(ascending=False)
 #Build a unique list to iterate through countries
-countrylist=bigdata3['country']
+print bigdata3.dtypes
+countrylist=bigdata3['country_x']
 cc=countrylist.drop_duplicates()
 
 for i in cc:
@@ -428,10 +442,10 @@ for i in cc:
     bigdata3['FXlagy']=bigdata3['FX Reserve2'].shift(4)
     bigdata3['FXchange_qoverq']=bigdata3['FX Reserve2']-bigdata3['FXlagq']
     bigdata3['FXchange_yovery']=bigdata3['FX Reserve2']-bigdata3['FXlagy']
-    bigdata3['GLDlagq']=bigdata3['Gold Tonnes2'].shift(1)
-    bigdata3['GLDlagy']=bigdata3['Gold Tonnes2'].shift(4)
-    bigdata3['GLDchange_qoverq']=bigdata3['Gold Tonnes2']-bigdata3['GLDlagq']
-    bigdata3['GLDchange_yovery']=bigdata3['Gold Tonnes2']-bigdata3['GLDlagy']
+    bigdata3['GLDlagq']=bigdata3['Gold Tonne2'].shift(1)
+    bigdata3['GLDlagy']=bigdata3['Gold Tonne2'].shift(4)
+    bigdata3['GLDchange_qoverq']=bigdata3['Gold Tonne2']-bigdata3['GLDlagq']
+    bigdata3['GLDchange_yovery']=bigdata3['Gold Tonne2']-bigdata3['GLDlagy']
     bigdata3['cnt']=1
 
 #Build General Measures for the dataset
@@ -454,4 +468,6 @@ print bigdata3.dtypes
 #print test
 
 
-bigdata3.to_csv('C:\Python27\gold_reserve.csv', index=False)
+bigdata3.to_csv('C:\Python27\testbbb.csv'), index=False)
+bigdata3.to_csv('testbbb.csv', index=False)
+reserve.to_csv('testbbb2.csv', index=False)
