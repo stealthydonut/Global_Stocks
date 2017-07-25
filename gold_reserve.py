@@ -8,9 +8,7 @@ res_df = pd.read_csv("C:/Users/davking/Desktop/Python/res.csv")
 #del bopdata
 #del reserve
 #del bigdata
-####################################################
-#Generates the Gold and FX Reserves for Each Country
-####################################################
+#Generates the Gold Reserves for Each Country 
 colist=[['Q1 2000','3/31/2000'],['Q2 2000','6/30/2000'],['Q3 2000','9/29/2000'],['Q4 2000','12/29/2000'],['Q1 2001','3/30/2001'],['Q2 2001','6/29/2001'],\
 ['Q3 2001','9/28/2001'],['Q4 2001','12/31/2001'],['Q1 2002','3/29/2002'],['Q2 2002','6/28/2002'],['Q3 2002','9/30/2002'],['Q4 2002','12/31/2002'],\
 ['Q1 2003','3/29/2003'],['Q2 2003','6/28/2003'],['Q3 2003','9/28/2003'],['Q4 2003','12/31/2003'],['Q1 2004','3/29/2004'],['Q2 2004','6/28/2004'],['Q3 2004','9/28/2004'],\
@@ -55,10 +53,6 @@ for i in colist:
 #del bopdata
 #del reserve
 #del bigdata
-
-######################################
-#Generates the U.S Balance of Payments
-######################################
 
 import quandl as qd
 #Get the quandl API key
@@ -152,7 +146,7 @@ cclist=[['AD','Andorra'],
 ['AM','Armenia'],
 ['AO','Angola'],
 ['AQ','Antarctica'],
-['BQ','Belarus4'],
+['BY','Belarus4'],
 ['AR','Argentina'],
 ['AS','American Samoa'],
 ['AT','Austria'],
@@ -189,7 +183,7 @@ cclist=[['AD','Andorra'],
 ['CC','Cocos (Keeling) Islands'],
 ['CD','Congo, the Democratic Republic of the'],
 ['CF','Central African Rep.'],
-['CG','Congo'],
+['CD','Congo'],
 ['CH','Switzerland'],
 ['CI','Côte dIvoire'],
 ['CK','Cook Islands'],
@@ -213,7 +207,7 @@ cclist=[['AD','Andorra'],
 ['DO','Dominican Republic'],
 ['DZ','Algeria'],
 ['EC','Ecuador'],
-['EE','Estonia'],
+['ES','Estonia'],
 ['EG','Egypt'],
 ['EH','Western Sahara'],
 ['ER','Eritrea'],
@@ -362,7 +356,7 @@ cclist=[['AD','Andorra'],
 ['SR','Suriname'],
 ['SS','South Sudan'],
 ['ST','Sao Tome and Principe'],
-['SV','El Salvador'],
+['ES','El Salvador'],
 ['SX','Sint Maarten (Dutch part)'],
 ['SY','Syrian Arab Republic'],
 ['SZ','Swaziland'],
@@ -389,7 +383,7 @@ cclist=[['AD','Andorra'],
 ['UG','Uganda'],
 ['UM','United States Minor Outlying Islands'],
 ['US','United States'],
-['UK','United Kingdom'],
+['GB','United Kingdom'],
 ['UY','Uruguay'],
 ['UZ','Uzbekistan'],
 ['VA','Holy See'],
@@ -422,31 +416,63 @@ bigdata2.__delitem__('country2_y')
 
 bigdata3x=pd.merge(bigdata2, reserve,how='left',  left_on=['country','date'], right_on=['country','date'])
 bigdata3=pd.merge(bopgold2, bigdata3x,how='left',  left_on=['country','merge'], right_on=['cc','quarter_y'])
+
+#######################################################################
+#Add the missing gold reserves - these could be IMF, United States, etc
+#######################################################################
+goldlist=['BX'],['CX'],['US'],['EZ'],['IZ'],['WZ']
+
+additional = pd.DataFrame()
+
+for i in goldlist:
+    cc=''.join(i[0])   
+    bd=bigdata3x[bigdata2['cc']==cc]
+    additional = additional.append(bd, ignore_index=False)
+
+additional['quarter_value'] = additional['quarter_y'].str.slice(1, 2)
+additional['year'] = additional['quarter_y'].str.slice(3, 8)
+additional['FX Reserve2']=pd.to_numeric(additional['FX Reserve'], errors='coerce')
+additional['Gold Tonne2']=pd.to_numeric(additional['Gold Tonne'], errors='coerce') 
+additional['merge'] = additional['quarter_y']
+additional['country_x'] = additional['cc']  
+additionalgold=additional[['country_x','merge','Gold Tonne','FX Reserve','year','quarter_value']]
+
+###########################
+#Create the analytical file
+###########################
 bigdata3['dategold']=pd.to_datetime(bigdata3['date'], errors='coerce')
 bigdata3['monthyear'] = bigdata3['dategold'].dt.strftime("%y%m")
 bigdata3['FX Reserve2']=pd.to_numeric(bigdata3['FX Reserve'], errors='coerce')
 bigdata3['Gold Tonne2']=pd.to_numeric(bigdata3['Gold Tonne'], errors='coerce')    
-bigdata3[['country_x','Exports','Imports','Balance','merge','Gold Tonne','FX Reserve']]
 #Build sort key
-print bigdata3.dtypes
+bigdata3['quarter_value'] = bigdata3y['merge'].str.slice(1, 2)
+bigdata3['year'] = bigdata3['merge'].str.slice(3, 8)
+bigdata3gold=bigdata3y[['country_x','Exports','Imports','Balance','merge','Gold Tonne','FX Reserve','year','quarter_value']]
 
-print bigdata3
-result=tax_reciept.sort_index(ascending=False)
-#Build a unique list to iterate through countries
-print bigdata3.dtypes
-countrylist=bigdata3['country_x']
+#Set the missing data and the joint data 
+bigdata3goldy = bigdata3gold.append(additionalgold, ignore_index=True)
+bigdata3goldy['FX Reserve2']=pd.to_numeric(bigdata3goldy['FX Reserve'], errors='coerce')
+bigdata3goldy['Gold Tonne2']=pd.to_numeric(bigdata3goldy['Gold Tonne'], errors='coerce')    
+bigdata3goldx=bigdata3goldy.sort_values(['country_x','year','quarter_value'], ascending=[True, True, True])
+
+print bigdata3goldx.dtypes
+
+countrylist=bigdata3goldx['country_x']
 cc=countrylist.drop_duplicates()
 
 for i in cc:
-    bigdata3['FXlagq']=bigdata3['FX Reserve2'].shift(1)
-    bigdata3['FXlagy']=bigdata3['FX Reserve2'].shift(4)
-    bigdata3['FXchange_qoverq']=bigdata3['FX Reserve2']-bigdata3['FXlagq']
-    bigdata3['FXchange_yovery']=bigdata3['FX Reserve2']-bigdata3['FXlagy']
-    bigdata3['GLDlagq']=bigdata3['Gold Tonne2'].shift(1)
-    bigdata3['GLDlagy']=bigdata3['Gold Tonne2'].shift(4)
-    bigdata3['GLDchange_qoverq']=bigdata3['Gold Tonne2']-bigdata3['GLDlagq']
-    bigdata3['GLDchange_yovery']=bigdata3['Gold Tonne2']-bigdata3['GLDlagy']
-    bigdata3['cnt']=1
+    bigdata3goldx['FXlagq']=bigdata3goldx['FX Reserve2'].shift(1)
+    bigdata3goldx['FXlagy']=bigdata3goldx['FX Reserve2'].shift(4)
+    bigdata3goldx['FXchange_qoverq']=bigdata3goldx['FX Reserve2']-bigdata3goldx['FXlagq']
+    bigdata3goldx['FXchange_yovery']=bigdata3goldx['FX Reserve2']-bigdata3goldx['FXlagy']
+    bigdata3goldx['GLDlagq']=bigdata3goldx['Gold Tonne2'].shift(1)
+    bigdata3goldx['GLDlagy']=bigdata3goldx['Gold Tonne2'].shift(4)
+    bigdata3goldx['GLDchange_qoverq']=bigdata3goldx['Gold Tonne2']-bigdata3goldx['GLDlagq']
+    bigdata3goldx['GLDchange_yovery']=bigdata3goldx['Gold Tonne2']-bigdata3goldx['GLDlagy']
+    bigdata3goldx['cnt']=1
+
+
+
 
 #Build General Measures for the dataset
 bigdata3['GLDchange_yovery_negfl'] = np.where(bigdata3['GLDchange_yovery']<0, 1, 0)
@@ -458,7 +484,13 @@ dfile= bigdata3.groupby(['monthyear'], as_index=False)['GLDchange_qoverq','GLDch
 'FXchange_yovery_posfl','GLDchange_yovery_posfl'].sum()
 print dfile
 
-print bigdata3.dtypes
+print bigdata2.dtypes
+
+t=bigdata2[bigdata2['Gold Tonne']>0]
+countrylist=t['cc']
+cc2=countrylist.drop_duplicates()
+
+print cc2
 
 
 
@@ -469,5 +501,5 @@ print bigdata3.dtypes
 
 
 bigdata3.to_csv('C:\Python27\testbbb.csv'), index=False)
-bigdata3.to_csv('testbbb.csv', index=False)
-reserve.to_csv('testbbb2.csv', index=False)
+bigdata3goldx.to_csv('testbbb.csv', index=False)
+cc.to_csv('testbbb2.csv', index=False)
