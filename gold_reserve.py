@@ -470,27 +470,37 @@ for i in cc:
     bigdata3goldx['GLDchange_qoverq']=bigdata3goldx['Gold Tonne2']-bigdata3goldx['GLDlagq']
     bigdata3goldx['GLDchange_yovery']=bigdata3goldx['Gold Tonne2']-bigdata3goldx['GLDlagy']
     bigdata3goldx['cnt']=1
+    bigdata3goldx['IMlagq']=bigdata3goldx['Imports'].shift(1)
+    bigdata3goldx['IMlagy']=bigdata3goldx['Imports'].shift(4)
+    bigdata3goldx['IMchange_qoverq']=bigdata3goldx['Imports']-bigdata3goldx['IMlagq']
+    bigdata3goldx['IMchange_yovery']=bigdata3goldx['Imports']-bigdata3goldx['IMlagy']                 
+    bigdata3goldx['EXlagq']=bigdata3goldx['Exports'].shift(1)
+    bigdata3goldx['EXlagy']=bigdata3goldx['Exports'].shift(4) 
+                  
 
-
-
-
+#######################################
 #Build General Measures for the dataset
-bigdata3['GLDchange_yovery_negfl'] = np.where(bigdata3['GLDchange_yovery']<0, 1, 0)
-bigdata3['FXchange_yovery_negfl'] = np.where(bigdata3['FXchange_yovery']<0, 1, 0)
-bigdata3['GLDchange_yovery_posfl'] = np.where(bigdata3['GLDchange_yovery']>0, 1, 0)
-bigdata3['FXchange_yovery_posfl'] = np.where(bigdata3['FXchange_yovery']>0, 1, 0)
+#######################################
+bigdata3goldx['GLDchange_yovery_negfl'] = np.where(bigdata3goldx['GLDchange_yovery']<0, 1, 0)
+bigdata3goldx['FXchange_yovery_negfl'] = np.where(bigdata3goldx['FXchange_yovery']<0, 1, 0)
+bigdata3goldx['IMchange_yovery_negfl'] = np.where(bigdata3goldx['IMchange_yovery']<0, 1, 0)
+bigdata3goldx['GLDchange_yovery_posfl'] = np.where(bigdata3goldx['GLDchange_yovery']>0, 1, 0)
+bigdata3goldx['FXchange_yovery_posfl'] = np.where(bigdata3goldx['FXchange_yovery']>0, 1, 0)
+bigdata3goldx['IMchange_yovery_posfl'] = np.where(bigdata3goldx['IMchange_yovery']>0, 1, 0)
 
-dfile= bigdata3.groupby(['monthyear'], as_index=False)['GLDchange_qoverq','GLDchange_yovery','FXchange_qoverq','FXchange_yovery','cnt','GLDchange_yovery_negfl','FXchange_yovery_negfl',\
-'FXchange_yovery_posfl','GLDchange_yovery_posfl'].sum()
+dfile= bigdata3goldx.groupby(['year','quarter_value'], as_index=False)['GLDchange_qoverq','GLDchange_yovery','FXchange_qoverq','FXchange_yovery','IMchange_qoverq','IMchange_yovery','cnt','GLDchange_yovery_negfl','FXchange_yovery_negfl','IMchange_yovery_negfl',\
+'FXchange_yovery_posfl','GLDchange_yovery_posfl','IMchange_yovery_posfl'].sum()
+########################
+#Index the change values
+########################
+dfile['GLDyoy']=dfile['GLDchange_yovery_posfl']/dfile['GLDchange_yovery_negfl'] 
+dfile['FXyoy']=dfile['FXchange_yovery_posfl']/dfile['FXchange_yovery_negfl'] 
+dfile['IMyoy']=dfile['IMchange_yovery_posfl']/dfile['IMchange_yovery_negfl'] 
+
+
 print dfile
 
-print bigdata2.dtypes
 
-t=bigdata2[bigdata2['Gold Tonne']>0]
-countrylist=t['cc']
-cc2=countrylist.drop_duplicates()
-
-print cc2
 
 
 
@@ -502,4 +512,4 @@ print cc2
 
 bigdata3.to_csv('C:\Python27\testbbb.csv'), index=False)
 bigdata3goldx.to_csv('testbbb.csv', index=False)
-cc.to_csv('testbbb2.csv', index=False)
+dfile.to_csv('testbbb2.csv', index=False)
