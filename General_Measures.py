@@ -40,6 +40,10 @@ fxusdaud = quandl.get("FRED/DEXUSAL")
 fxusdmex = quandl.get("FRED/DEXMXUS")
 fxusdche = quandl.get("FRED/DEXSZUS")
 fxusdeur = quandl.get("FED/RXI_US_N_B_EU")
+commodity = quandl.get("RICI/RICI") #Commodity Index
+agriculture = quandl.get("RICI/RICIA") #Agriculture
+metals = quandl.get("RICI/RICIM") #Metals
+energy = quandl.get("RICI/RICIE") #Energy
 
 #US Reserves
 res_ru = quandl.get("BANKRUSSIA/RESRV")
