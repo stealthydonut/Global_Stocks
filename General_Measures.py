@@ -16,6 +16,7 @@ quandl.ApiConfig.api_key = 'BVno6pBYgcEvZJ6uctTr'
 #Get the Quandl Data
 ###################
 ism = quandl.get("ISM/NONMAN_INVSENT")
+ism = quandl.get("ISM/MAN_PMI") #another ISM
 gold = quandl.get("LBMA/GOLD")
 silver = quandl.get("LBMA/SILVER")
 oil = quandl.get("OPEC/ORB")
@@ -40,14 +41,13 @@ fxusdaud = quandl.get("FRED/DEXUSAL")
 fxusdmex = quandl.get("FRED/DEXMXUS")
 fxusdche = quandl.get("FRED/DEXSZUS")
 fxusdeur = quandl.get("FED/RXI_US_N_B_EU")
-commodity = quandl.get("RICI/RICI") #Commodity Index
-agriculture = quandl.get("RICI/RICIA") #Agriculture
-metals = quandl.get("RICI/RICIM") #Metals
-energy = quandl.get("RICI/RICIE") #Energy
 
 #US Reserves
-res_ru = quandl.get("BANKRUSSIA/RESRV")
+
 res_ca = quandl.get("FRED/TRESEGCAM052N")
+res_jp = quandl.get("FRED/TRESEGJPM052N")
+res_ru = quandl.get("FRED/TRESEGRUM052N")
+
 #Gold Stock
 gld_us = quandl.get("FRED/M1476CUSM144NNBR")
 
@@ -126,23 +126,24 @@ ustax['monthyear'] = ustax['ind'].dt.strftime("%m,%y")
 ########################################
 #Create the monthly files for daily data
 ########################################
-gold['monthyear'] = gold['ind'].dt.strftime("%m,%y")
-gold['Gold daycnt'] = 1
-goldmth = gold.groupby(['monthyear'], as_index=False)['Gold USD (AM)','Gold USD (PM)','Gold GBP (AM)','Gold GBP (PM)','Gold EURO (AM)','Gold EURO (PM)','Gold daycnt'].sum()
-silver['monthyear'] = silver['ind'].dt.strftime("%m,%y")
-silver['Silver daycnt'] = 1
-silvermth = silver.groupby(['monthyear'], as_index=False)['Silver USD','Silver GBP','Silver EURO','Silver daycnt'].sum()
-oil['monthyear'] = oil['ind'].dt.strftime("%m,%y")
-oil['Oil daycnt'] = 1
-oilmth = oil.groupby(['monthyear'], as_index=False)['Oil USD','Oil daycnt'].sum()
+daily_file['monthyear'] = daily_file['ind'].dt.strftime("%m,%y")
+#################################################
+#Create daycnts so the averages can be calculated
+#################################################
+daily_file['Gold daycnt'] = np.where(daily_file['Gold USD (AM)']>0, 1, 0)
+daily_file['Silver daycnt'] = np.where(daily_file['Silver USD']>0, 1, 0)
+daily_file['Oil daycnt'] = np.where(daily_file['Oil USD']>0, 1, 0)
+daily_file['daycnt'] = 1
+dailymth = daily_file.groupby(['monthyear'], as_index=False)['daycnt','Gold daycnt','Silver daycnt','Oil daycnt',\
+'Gold USD (AM)','Gold USD (PM)','Gold GBP (AM)','Gold GBP (PM)','Gold EURO (AM)','Gold EURO (PM)',\
+'Silver USD','Silver GBP','Silver EURO','Oil USD'].sum()
+
 ################################
 #Merge the monthly data together
 ################################
-mf=ustax.merge(goldmth, on='monthyear', how='outer')
-mf1=mf.merge(silvermth, on='monthyear', how='outer')
-mf2=mf1.merge(oilmth, on='monthyear', how='outer')
-mf3=mf2.merge(ism, on='monthyear', how='outer')
-monthly_file=mf3.merge(uranium, on='monthyear', how='outer')
+mf=ustax.merge(dailymth, on='monthyear', how='outer')
+mf1=mf.merge(ism, on='monthyear', how='outer')
+monthly_file=mf1.merge(uranium, on='monthyear', how='outer')
 ############################
 #Build measures on the files
 ############################
@@ -174,14 +175,6 @@ bigdata = res_ru.append(res_jp, ignore_index=True)
 
 
 
-
+daily_file.to_excel('C:\Users\davking\Documents\My Tableau Repository\Datasources\commodity_file.xls', index=False)     
+monthly_file.to_excel('C:\Users\davking\Documents\My Tableau Repository\Datasources\monthly_file.xls', index=False)     
    
-        
-#Put the dataset back into storage
-from google.cloud import storage
-client = storage.Client()
-bucket2 = client.get_bucket('stagingarea')
-df_out = pd.DataFrame(daily_file)
-df_out.to_csv('general_measures.csv', index=False)
-blob2 = bucket2.blob('general_measures.csv')
-blob2.upload_from_filename('general_measures.csv')
