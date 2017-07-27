@@ -16,7 +16,7 @@ quandl.ApiConfig.api_key = 'BVno6pBYgcEvZJ6uctTr'
 #Get the Quandl Data
 ###################
 ism = quandl.get("ISM/NONMAN_INVSENT")
-ism = quandl.get("ISM/MAN_PMI") #another ISM
+ism2 = quandl.get("ISM/MAN_PMI") #another ISM
 gold = quandl.get("LBMA/GOLD")
 silver = quandl.get("LBMA/SILVER")
 oil = quandl.get("OPEC/ORB")
@@ -119,6 +119,8 @@ daily_file=df12.merge(oil, on='ind', how='outer')
 #################################
 ism['ind'] = ism.index
 ism['monthyear'] = ism['ind'].dt.strftime("%m,%y")
+ism2['ind'] = ism2.index
+ism2['monthyear'] = ism2['ind'].dt.strftime("%m,%y")
 uranium['ind'] = uranium.index
 uranium['monthyear'] = uranium['ind'].dt.strftime("%m,%y")
 ustax['ind'] = ustax.index
@@ -174,7 +176,8 @@ res_ca['ind']=res_ca.index
 bigdata = res_ru.append(res_jp, ignore_index=True)
 
 
-
+ism2.to_excel('C:\Python27\commodity_file.xls', index=False)   
 daily_file.to_excel('C:\Users\davking\Documents\My Tableau Repository\Datasources\commodity_file.xls', index=False)     
 monthly_file.to_excel('C:\Users\davking\Documents\My Tableau Repository\Datasources\monthly_file.xls', index=False)     
    
+
