@@ -11,6 +11,9 @@ else:
     from io import StringIO as stio
 #import matplotlib
 #import matplotlib.pyplot as plt
+
+
+
 quandl.ApiConfig.api_key = 'BVno6pBYgcEvZJ6uctTr'
 ####################
 #Get the Quandl Data
@@ -19,6 +22,7 @@ ism = quandl.get("ISM/NONMAN_INVSENT")
 ism2 = quandl.get("ISM/MAN_PMI") #another ISM
 gold = quandl.get("LBMA/GOLD")
 silver = quandl.get("LBMA/SILVER")
+#copper
 oil = quandl.get("OPEC/ORB")
 uranium = quandl.get("ODA/PURAN_USD")
 ustax = quandl.get("FMSTREAS/MTS")
