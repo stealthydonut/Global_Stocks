@@ -11,6 +11,8 @@ daily_prices2['GLDdate']=pd.to_datetime(daily_prices2['Date'], errors='coerce')
 daily_prices2['GLD Closex'] = daily_prices2.loc[daily_prices2[' GLD Close'].index, ' GLD Close'].map(lambda x: str(x).replace('HOLIDAY',''))
 daily_prices2['GLD Close']=pd.to_numeric(daily_prices2['GLD Closex'], errors='coerce')
 daily_prices2['LBMA Gold Pricex'] = daily_prices2.loc[daily_prices2[' LBMA Gold Price'].index, ' LBMA Gold Price'].map(lambda x: str(x).replace('HOLIDAY',''))
+daily_prices2['LBMA Gold Pricex'] = daily_prices2.loc[daily_prices2['LBMA Gold Pricex'].index, 'LBMA Gold Pricex'].map(lambda x: str(x).replace('$',''))
+
 daily_prices2['LBMA Gold Price']=pd.to_numeric(daily_prices2['LBMA Gold Pricex'], errors='coerce')
 daily_prices2['NAV per GLD in Goldx'] = daily_prices2.loc[daily_prices2[' NAV per GLD in Gold'].index, ' NAV per GLD in Gold'].map(lambda x: str(x).replace('HOLIDAY',''))
 daily_prices2['NAV per GLD in Gold']=pd.to_numeric(daily_prices2['NAV per GLD in Goldx'], errors='coerce')
@@ -33,7 +35,30 @@ daily_prices2['Total Net Asset Value Tonnes in the Trust']=pd.to_numeric(daily_p
 daily_prices2['Total Net Asset Value in the Trustx'] = daily_prices2.loc[daily_prices2[' Total Net Asset Value in the Trust'].index, ' Total Net Asset Value in the Trust'].map(lambda x: str(x).replace('HOLIDAY',''))
 daily_prices2['Total Net Asset Value in the Trust']=pd.to_numeric(daily_prices2['Total Net Asset Value in the Trustx'], errors='coerce')
 
-print daily_prices2
 df = daily_prices2[['GLDdate','GLD Close','LBMA Gold Price','NAV per GLD in Gold','NAV/share','Indicative Price of GLD','Mid point of bid/ask spread',\
 'Premium/Discount of GLD mid point v Indicative Value of GLD','Daily Share Volume','Total Net Asset Value Ounces in the Trust','Total Net Asset Value Tonnes in the Trust',\
 'Total Net Asset Value in the Trust']]
+df['cnt']=1
+
+myfile = ''
+start="http://finance.yahoo.com/d/quotes.csv?s="
+end="&f=d1f6s7oc1pghnsjkdk5j6rv"
+str1 = 'GLD'
+text2=start+str1+end    
+#Get the data from the yahoo api
+link=text2
+f = urllib.urlopen(link)
+myfile += f.readline()
+TESTDATA=stio(myfile)
+daily_prices = pd.read_csv(TESTDATA, sep=",", names=['date','Float Shares','Short Ratio','Open','Change','Previous Close','Low','High','Name','Ticker','52 Low','52 High','Dividend','Per change 52 H','Per change 52 L','PE Ratio','Volume'])
+
+print daily_prices
+
+
+test['monthyear'] = test['GLDdate'].dt.strftime("%Y%m") 
+test['shares outstanding']=267700000
+dfile= test.groupby(['monthyear'], as_index=False)['cnt','GLDTotal Net Asset Value Ounced in Trust','shares outstanding'].sum()
+dfile['ounces']=dfile['GLDTotal Net Asset Value Tonnes in Trust']/dfile['cnt']
+dfile['claims per ounce']=dfile['GLDTotal Net Asset Value Ounced in Trust']/dfile['shares outstanding']
+dfile['claims per ounce2']=dfile['shares outstanding']/dfile['GLDTotal Net Asset Value Ounced in Trust']
+
