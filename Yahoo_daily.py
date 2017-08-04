@@ -54,7 +54,10 @@ for i in df2:
 TESTDATA=stio(myfile)
 
 daily_prices = pd.read_csv(TESTDATA, sep=",", names=['date','Float Shares','Short Ratio','Open','Change','Previous Close','Low','High','Name','Ticker','52 Low','52 High','Dividend','Per change 52 H','Per change 52 L','PE Ratio','Volume'])
-daily_prices['Div Yield']=(daily_prices['Dividend']/daily_prices['Previous Close'])*100      
+daily_prices['Div Yield']=(daily_prices['Dividend']/daily_prices['Previous Close'])*100
+daily_prices['Mkt Cap']=daily_prices['Previous Close']*daily_prices['Float Shares'] 
+daily_prices['Vol Amt']=daily_prices['52 High']-daily_prices['52 Low']
+daily_prices['Vol %']=daily_prices['Vol Amt']/daily_prices['Previous Close']
 
 bigdata=pd.merge(daily_prices, df, left_on='Ticker', right_on='Symbol')
 
