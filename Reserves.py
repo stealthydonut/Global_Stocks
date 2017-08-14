@@ -320,7 +320,8 @@ for i in cclist:
         data2['reserves']=pd.to_numeric(data2['value'], errors='coerce')
         data2['date2']=pd.to_datetime(data2['date'], errors='coerce')
         data2['cc']=part2
-        data2['source']=value     
+        data2['source']=value   
+        data2['type']='Reserves' 
         reserve = reserve.append(data2, ignore_index=False)
     except:
         print i
@@ -329,6 +330,7 @@ reservex=reserve.sort_values(['date2','cc'], ascending=[True, True])
 reservex['reserves_mm']=reservex['reserves']/100000000
 reservex2=reservex[reservex['reserves_mm'].notnull()]
 reservex3=reservex2.drop_duplicates(['date2','cc'], keep='last')    
+reservex3['cnt']=1
         
 #######################################
 #Get the SDR data for all countries
@@ -343,19 +345,25 @@ for i in cclist:
         part3='M194N'
         value=part1+part2+part3
         data2 = fred.get_series_all_releases(value)
-        data2['reserves']=pd.to_numeric(data2['value'], errors='coerce')
+        data2['sdr amt']=pd.to_numeric(data2['value'], errors='coerce')
         data2['date2']=pd.to_datetime(data2['date'], errors='coerce')
         data2['cc']=part2
-        data2['source']=value     
+        data2['source']=value
+        data2['type']='SDR'     
         sdr = sdr.append(data2, ignore_index=False)
     except:
         print i
 
+
 sdrx=sdr.sort_values(['date2','cc'], ascending=[True, True])
-sdrx['sdr_mm']=sdrx['sdr']/100000000
-sdrx2=sdrx[reservex['sdr_mm'].notnull()]
+sdrx['sdr_mm']=sdrx['sdr amt']/100000000
+sdrx2=sdrx[sdrx['sdr_mm'].notnull()]
 sdrx3=sdrx2.drop_duplicates(['date2','cc'], keep='last')    
-          
+sdrx3['cnt']=1          
+
+
+     
+     
 
 
 
