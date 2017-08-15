@@ -364,20 +364,19 @@ sdrx3['year'] = sdrx3['date2'].dt.strftime("%Y")
 
 
 bigdata = sdrx3.append(reservex3, ignore_index=True)
-    
-print bigdata 
-     
+       
 #Do analytics     
-test = reservex3.groupby(['cc','segment'], as_index=False)['cnt','amt_mm'].sum()  
-test = reservex3.groupby(['monthyear','segment'], as_index=False)['cnt','amt_mm'].sum()  
-test['total_reserves_mm']=test['reserves_mm']
-test2=test[['monthyear','total_reserves_mm']]
+test = bigdata.groupby(['monthyear','type','segment'], as_index=False)['cnt','amt_mm'].sum()  
+#Summarize the totals
+test2 = test.groupby(['monthyear',], as_index=False)['cnt','amt_mm'].sum()  
+test2['total_mm']=test2['amt_mm']
+test3=test2[['monthyear','total_mm']]
 
-reservex4=reservex3.merge(test2, on='monthyear', how='outer')
-reservex4['month_per']=reservex4['reserves_mm']/reservex4['total_reserves_mm']
+reservex4=reservex3.merge(test3, on='monthyear', how='outer')
+reservex4['month_per']=reservex4['amt_mm']/reservex4['total_mm']
 
 
-print test
+print reservex4
 
 tt=reservex3[reservex3['segment'].isnull()]
 print tt
