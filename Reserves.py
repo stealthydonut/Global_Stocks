@@ -1,8 +1,5 @@
 #Sourced from the following site https://github.com/mortada/fredapi
 import pandas as pd
-cclist=['TRESEGCAM052N','CA'],['TRESEGCNM052N','CN'],['TRESEGSAM194N','SA']
-
-
 from fredapi import Fred
 fred = Fred(api_key='4af3776273f66474d57345df390d74b6')
 
@@ -46,10 +43,10 @@ cclist=[['AD','Andorra'],
 ['AO','Angola'],
 ['AQ','Antarctica'],
 ['BY','Belarus4'],
-['AR','Argentina'],
+['AR','Argentina','South America'],
 ['AS','American Samoa'],
 ['AT','Austria','EU'],
-['AU','Australia'],
+['AU','Australia','ASIA EAST'],
 ['AW','Aruba'],
 ['AX','Åland Islands'],
 ['AZ','Azerbaijan'],
@@ -69,16 +66,16 @@ cclist=[['AD','Andorra'],
 ['BQ','Bonaire, Sint Eustatius and Saba'],
 ['CX','CEMAC'],
 ['BX','BIS3'],
-['BR','Brazil'],
+['BR','Brazil','Oil','South America'],
 ['BS','Bahamas'],
 ['BT','Bhutan'],
 ['BV','Bouvet Island'],
 ['BW','Botswana'],
 ['BY','Belarus'],
-['BO','Bolivia'],
+['BO','Bolivia','South America'],
 ['WZ','WAEMU'],
-['BZ','Belize'],
-['CA','Canada'],
+['BZ','Belize','South America'],
+['CA','Canada','NAFTA'],
 ['CC','Cocos (Keeling) Islands'],
 ['CD','Congo, the Democratic Republic of the'],
 ['CF','Central African Rep.'],
@@ -86,10 +83,10 @@ cclist=[['AD','Andorra'],
 ['CH','Switzerland','EU'],
 ['CI','Côte dIvoire'],
 ['CK','Cook Islands'],
-['CL','Chile'],
+['CL','Chile','South America'],
 ['CM','Cameroon'],
-['CN','China1'],
-['CO','Colombia'],
+['CN','China1','ASIA WEST'],
+['CO','Colombia','South America'],
 ['CR','Costa Rica'],
 ['CU','Cuba'],
 ['CV','Cabo Verde'],
@@ -99,7 +96,6 @@ cclist=[['AD','Andorra'],
 ['CZ','Czech Republic','EU'],
 ['EZ','ECB','EU'],
 ['DE','Germany','EU'],
-['','Saudi Arabia','oil'],
 ['DJ','Djibouti'],
 ['DK','Denmark','EU'],
 ['DM','Dominica'],
@@ -144,20 +140,20 @@ cclist=[['AD','Andorra'],
 ['HR','Croatia','EU'],
 ['HT','Haiti'],
 ['HU','Hungary','EU'],
-['ID','Indonesia'],
+['ID','Indonesia','Oil'],
 ['IE','Ireland','EU'],
 ['IL','Israel'],
 ['IM','Isle of Man','EU'],
-['IN','India'],
+['IN','India','ASIA EAST'],
 ['IO','British Indian Ocean Territory'],
-['IQ','Iraq'],
-['IR','Iran, Islamic Republic of'],
+['IQ','Iraq','oil'],
+['IR','Iran, Islamic Republic of','Oil'],
 ['IS','Iceland','EU'],
 ['IT','Italy','EU'],
 ['JE','Jersey'],
 ['JM','Jamaica'],
 ['JO','Jordan'],
-['JP','Japan'],
+['JP','Japan','ASIA EAST'],
 ['KE','Kenya'],
 ['KG','Kyrgyz Republic'],
 ['KH','Cambodia'],
@@ -165,10 +161,10 @@ cclist=[['AD','Andorra'],
 ['KM','Comoros'],
 ['KN','Saint Kitts and Nevis'],
 ['KP','Korea'],
-['KR','Korea, Republic of'],
-['KW','Kuwait'],
+['KR','Korea, Republic of','ASIA EAST'],
+['KW','Kuwait','oil'],
 ['KY','Cayman Islands'],
-['KZ','Kazakhstan'],
+['KZ','Kazakhstan','Russia'],
 ['LA','Laos'],
 ['LB','Lebanon'],
 ['LC','Saint Lucia'],
@@ -179,7 +175,7 @@ cclist=[['AD','Andorra'],
 ['LT','Lithuania','EU'],
 ['LU','Luxembourg','EU'],
 ['LV','Latvia','EU'],
-['LY','Libya'],
+['LY','Libya','Oil'],
 ['MA','Morocco'],
 ['MC','Monaco'],
 ['MD','Moldova, Republic of','EU'],
@@ -201,14 +197,14 @@ cclist=[['AD','Andorra'],
 ['MU','Mauritius'],
 ['MV','Maldives'],
 ['MW','Malawi'],
-['MX','Mexico'],
+['MX','Mexico','NAFTA'],
 ['MY','Malaysia'],
 ['MZ','Mozambique'],
 ['NA','Namibia'],
 ['NC','New Caledonia'],
 ['NE','Niger'],
 ['NF','Norfolk Island'],
-['NG','Nigeria'],
+['NG','Nigeria','Oil'],
 ['NI','Nicaragua'],
 ['NL','Netherlands','EU'],
 ['NO','Norway','EU'],
@@ -218,7 +214,7 @@ cclist=[['AD','Andorra'],
 ['NZ','New Zealand'],
 ['OM','Oman'],
 ['PA','Panama'],
-['PE','Peru'],
+['PE','Peru','South America'],
 ['PF','French Polynesia'],
 ['PG','Papua New Guinea'],
 ['PH','Philippines'],
@@ -228,17 +224,17 @@ cclist=[['AD','Andorra'],
 ['PN','Pitcairn'],
 ['PR','Puerto Rico'],
 ['PS','Palestine, State of'],
-['RU','Russia'],
+['RU','Russia','Russia'],
 ['PT','Portugal','EU'],
 ['PW','Palau'],
 ['PY','Paraguay'],
-['QA','Qatar'],
+['QA','Qatar','Oil'],
 ['RE','Réunion'],
 ['RO','Romania','EU'],
 ['RS','Serbia','EU'],
 ['RU','Russian Federation'],
 ['RW','Rwanda'],
-['SA','Saudi Arabia2'],
+['SA','Saudi Arabia2','Oil'],
 ['SB','Solomon Islands'],
 ['SC','Seychelles'],
 ['SD','Sudan'],
@@ -265,13 +261,13 @@ cclist=[['AD','Andorra'],
 ['SY','Syria'],
 ['TG','Togo'],
 ['TH','Thailand'],
-['TJ','Tajikistan'],
+['TJ','Tajikistan','Russia'],
 ['TK','Tokelau'],
 ['TL','Timor-Leste'],
-['TM','Turkmenistan'],
+['TM','Turkmenistan','Russia'],
 ['TN','Tunisia'],
 ['TO','Tonga'],
-['TR','Turkey'],
+['TR','Turkey','Russia'],
 ['TT','Trinidad and Tobago'],
 ['TV','Tuvalu'],
 ['TW','Taiwan'],
@@ -281,10 +277,10 @@ cclist=[['AD','Andorra'],
 ['',''],
 ['UG','Uganda'],
 ['UM','United States Minor Outlying Islands'],
-['US','United States'],
+['US','United States','US'],
 ['GB','United Kingdom','EU'],
 ['UY','Uruguay'],
-['UZ','Uzbekistan'],
+['UZ','Uzbekistan','Russia'],
 ['VA','Holy See'],
 ['',''],
 ['VC','Saint Vincent and the Grenadines'],
@@ -292,13 +288,13 @@ cclist=[['AD','Andorra'],
 ['VG','Virgin Islands, British'],
 ['VI','Virgin Islands, U.S.'],
 ['VN','Viet Nam'],
-['VE','Venezuela'],
+['VE','Venezuela','oil'],
 ['VU','Vanuatu'],
 ['WF','Wallis and Futuna'],
 ['WS','Samoa'],
 ['YE','Yemen'],
 ['YT','Mayotte'],
-['ZA','South Africa'],
+['ZA','South Africa','Gold'],
 ['ZM','Zambia'],
 ['ZW','Zimbabwe']]
 labels=['cc','country2']
@@ -316,22 +312,23 @@ for i in cclist:
         part3='M052N'
         value=part1+part2+part3
         data2 = fred.get_series_all_releases(value)
-        data2['reserves']=pd.to_numeric(data2['value'], errors='coerce')
+        data2['amount']=pd.to_numeric(data2['value'], errors='coerce')
         data2['date2']=pd.to_datetime(data2['date'], errors='coerce')
         data2['cc']=part2
         data2['source']=value   
-        data2['type']='Reserves' 
+        data2['type']='Reserves'
+        data2['segment']=''.join(i[2])    
         reserve = reserve.append(data2, ignore_index=False)
     except:
         print i
 
 reservex=reserve.sort_values(['date2','cc'], ascending=[True, True])
-reservex['reserves_mm']=reservex['reserves']/100000000
-reservex2=reservex[reservex['reserves_mm'].notnull()]
+reservex['amt_mm']=reservex['amount']/100000000
+reservex2=reservex[reservex['amt_mm'].notnull()]
 reservex3=reservex2.drop_duplicates(['date2','cc'], keep='last')    
 reservex3['cnt']=1
 reservex3['monthyear'] = reservex3['date2'].dt.strftime("%Y,%m")
-
+reservex3['year'] = reservex3['date2'].dt.strftime("%Y")
         
 #######################################
 #Get the SDR data for all countries
@@ -346,25 +343,33 @@ for i in cclist:
         part3='M194N'
         value=part1+part2+part3
         data2 = fred.get_series_all_releases(value)
-        data2['sdr amt']=pd.to_numeric(data2['value'], errors='coerce')
+        data2['amount']=pd.to_numeric(data2['value'], errors='coerce')
         data2['date2']=pd.to_datetime(data2['date'], errors='coerce')
         data2['cc']=part2
         data2['source']=value
-        data2['type']='SDR'     
+        data2['type']='SDR'
+        data2['segment']=''.join(i[2])  
         sdr = sdr.append(data2, ignore_index=False)
     except:
         print i
 
 
 sdrx=sdr.sort_values(['date2','cc'], ascending=[True, True])
-sdrx['sdr_mm']=sdrx['sdr amt']/100000000
-sdrx2=sdrx[sdrx['sdr_mm'].notnull()]
+sdrx['amt_mm']=sdrx['amount']/100000000
+sdrx2=sdrx[sdrx['amt_mm'].notnull()]
 sdrx3=sdrx2.drop_duplicates(['date2','cc'], keep='last')    
 sdrx3['cnt']=1          
+sdrx3['monthyear'] = sdrx3['date2'].dt.strftime("%Y,%m")
+sdrx3['year'] = sdrx3['date2'].dt.strftime("%Y")
 
-#Do analytics     
+
+bigdata = sdrx3.append(reservex3, ignore_index=True)
+    
+print bigdata 
      
-test = reservex3.groupby(['monthyear'], as_index=False)['cnt','reserves_mm'].sum()  
+#Do analytics     
+test = reservex3.groupby(['cc','segment'], as_index=False)['cnt','amt_mm'].sum()  
+test = reservex3.groupby(['monthyear','segment'], as_index=False)['cnt','amt_mm'].sum()  
 test['total_reserves_mm']=test['reserves_mm']
 test2=test[['monthyear','total_reserves_mm']]
 
@@ -372,10 +377,11 @@ reservex4=reservex3.merge(test2, on='monthyear', how='outer')
 reservex4['month_per']=reservex4['reserves_mm']/reservex4['total_reserves_mm']
 
 
+print test
 
-
-
-print reservex4
+tt=reservex3[reservex3['segment'].isnull()]
+print tt
+print reservex34
 print cclist
 #print test   
      
@@ -383,8 +389,4 @@ reservex4.to_excel('C:/Users/davking/Documents/My Tableau Repository/Datasources
 reservex3.to_excel('C:/Users/davking/Documents/My Tableau Repository/Datasources/reserve_file.xls', index=False)   
      
      
-
-
-
-
 
