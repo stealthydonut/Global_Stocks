@@ -3,35 +3,6 @@ import pandas as pd
 from fredapi import Fred
 fred = Fred(api_key='4af3776273f66474d57345df390d74b6')
 
-reserve = pd.DataFrame()
-
-
-for i in test:
-    try:
-        part1='TRESEG'
-        part2=''.join(i[0]) 
-        part3='M052N'
-        value=part1+part2+part3
-        data2 = fred.get_series_all_releases(value)
-        data2['reserves']=pd.to_numeric(data2['value'], errors='coerce')
-        data2['date2']=pd.to_datetime(data2['date'], errors='coerce')
-        data2['cc']=part2
-        data2['source']=value     
-        reserve = reserve.append(data2, ignore_index=False)
-    except:
-        print i
-
-reservex=reserve.sort_values(['date2','cc'], ascending=[True, True])
-reservex['reserves_mm']=reservex['reserves']/1000000
-reservex2=reservex[reservex['reserves_mm'].notnull()]
-reservex3=reservex2.drop_duplicates(['date2','cc'], keep='last')    
-        
-        
-
-print reservex3
-del reserve
-del reservex
-del data2
 
 cclist=[['AD','Andorra'],
 ['AE','United Arab Emirates','oil'],
@@ -366,17 +337,35 @@ sdrx3['year'] = sdrx3['date2'].dt.strftime("%Y")
 bigdata = sdrx3.append(reservex3, ignore_index=True)
        
 #Do analytics     
-test = bigdata.groupby(['monthyear','type','segment'], as_index=False)['cnt','amt_mm'].sum()  
-#Summarize the totals
-test2 = test.groupby(['monthyear',], as_index=False)['cnt','amt_mm'].sum()  
-test2['total_mm']=test2['amt_mm']
-test3=test2[['monthyear','total_mm']]
+test = bigdata.groupby(['year','monthyear','type','segment'], as_index=False)['cnt','amt_mm'].sum()  
+test = bigdata.groupby(['year','type','segment'], as_index=False)['cnt','amt_mm'].sum()  
 
-reservex4=reservex3.merge(test3, on='monthyear', how='outer')
+#Summarize the totals
+test2 = test.groupby(['monthyear',], as_index=False)['cnt','amt_mm'].sum() 
+test2 = test.groupby(['year',], as_index=False)['cnt','amt_mm'].sum()   
+test2['total_mm']=test2['amt_mm']
+test3=test2[['year','total_mm']]
+
+reservex4=test.merge(test3, on='year', how='outer')
 reservex4['month_per']=reservex4['amt_mm']/reservex4['total_mm']
 
+#Create a list 
+ccsublist = bigdata.groupby(['segment'], as_index=False)['cnt'].sum() 
+ccsublist2=ccsublist['segment']
 
-print reservex4
+goldfile=pd.DataFrame()
+
+for i in ccsublist2:
+    t=reservex4[reservex4['segment']==i]
+    t2=t.sort_values(['type','year'], ascending=[True, True])
+    t2['amt_mm1']=t2['amt_mm'].shift(1)
+    t2['amt_mm2']=t2['amt_mm'].shift(2)
+    t2['amt_mm3']=t2['amt_mm'].shift(3)
+    goldfile = goldfile.append(t2, ignore_index=False)
+        
+goldfile['YoY']=(goldfile['amt_mm']-goldfile['amt_mm1'])/goldfile['amt_mm1']
+goldfile['YoY2']=(goldfile['amt_mm']-goldfile['amt_mm2'])/goldfile['amt_mm2']
+
 
 tt=reservex3[reservex3['segment'].isnull()]
 print tt
@@ -384,8 +373,9 @@ print reservex34
 print cclist
 #print test   
      
-reservex4.to_excel('C:/Users/davking/Documents/My Tableau Repository/Datasources/reserve_file.xls', index=False)     
+goldfile.to_excel('C:/Users/davking/Documents/My Tableau Repository/Datasources/reserve_file.xls', index=False)     
 reservex3.to_excel('C:/Users/davking/Documents/My Tableau Repository/Datasources/reserve_file.xls', index=False)   
      
+
      
 
