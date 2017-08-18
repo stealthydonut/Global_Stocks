@@ -12,6 +12,13 @@ else:
 #import matplotlib
 #import matplotlib.pyplot as plt
 
+#Sourced from the following site https://github.com/mortada/fredapi
+
+from fredapi import Fred
+fred = Fred(api_key='4af3776273f66474d57345df390d74b6')
+data2 = fred.get_series_all_releases(DJIA)
+#data2['amount']=pd.to_numeric(data2['value'], errors='coerce')
+#data2['date2']=pd.to_datetime(data2['date'], errors='coerce')
 
 
 quandl.ApiConfig.api_key = 'BVno6pBYgcEvZJ6uctTr'
