@@ -19,6 +19,7 @@ fred = Fred(api_key='4af3776273f66474d57345df390d74b6')
 data2 = fred.get_series_all_releases(DJIA)
 data2 = fred.get_series_all_releases('DGS10') #10-Year Treasury Constant Maturity Rate 
 data2 = fred.get_series_all_releases('USD3MTD156N') #libor
+ All Federal Reserve Banks: Total Assets (WALCL) #Federal reserve balance sheet
 USD12MD156N
 
 #data2['amount']=pd.to_numeric(data2['value'], errors='coerce')
