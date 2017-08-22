@@ -1,6 +1,7 @@
 import pandas as pd
 import requests
 from pandas.compat import StringIO
+import urllib
 dls = "http://www.spdrgoldshares.com/assets/dynamic/GLD/GLD_US_archive_EN.csv"
  
 r = requests.get(dls)
@@ -40,24 +41,10 @@ df = daily_prices2[['GLDdate','GLD Close','LBMA Gold Price','NAV per GLD in Gold
 'Total Net Asset Value in the Trust']]
 df['cnt']=1
 
-myfile = ''
-start="http://finance.yahoo.com/d/quotes.csv?s="
-end="&f=d1f6s7oc1pghnsjkdk5j6rv"
-str1 = 'GLD'
-text2=start+str1+end    
-#Get the data from the yahoo api
-link=text2
-f = urllib.urlopen(link)
-myfile += f.readline()
-TESTDATA=stio(myfile)
-daily_prices = pd.read_csv(TESTDATA, sep=",", names=['date','Float Shares','Short Ratio','Open','Change','Previous Close','Low','High','Name','Ticker','52 Low','52 High','Dividend','Per change 52 H','Per change 52 L','PE Ratio','Volume'])
 
-print daily_prices
-
-
-test['monthyear'] = test['GLDdate'].dt.strftime("%Y%m") 
-test['shares outstanding']=267700000
-dfile= test.groupby(['monthyear'], as_index=False)['cnt','GLDTotal Net Asset Value Ounced in Trust','shares outstanding'].sum()
+df['monthyear'] = df['GLDdate'].dt.strftime("%Y%m") 
+df['shares outstanding']=267700000
+dfile= df.groupby(['monthyear'], as_index=False)['cnt','Total Net Asset Value Ounces in the Trust','shares outstanding'].sum()
 dfile['ounces']=dfile['GLDTotal Net Asset Value Tonnes in Trust']/dfile['cnt']
 dfile['claims per ounce']=dfile['GLDTotal Net Asset Value Ounced in Trust']/dfile['shares outstanding']
 dfile['claims per ounce2']=dfile['shares outstanding']/dfile['GLDTotal Net Asset Value Ounced in Trust']
