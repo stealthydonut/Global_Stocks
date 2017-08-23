@@ -1,6 +1,9 @@
 import quandl
 import urllib
 import pandas as pd
+import quandl
+import urllib
+import pandas as pd
 import numpy as np
 import StringIO
 import datetime
@@ -14,26 +17,20 @@ else:
 
 #Sourced from the following site https://github.com/mortada/fredapi
 
+##########
+#FRED Data
+##########
 from fredapi import Fred
 fred = Fred(api_key='4af3776273f66474d57345df390d74b6')
-djia = fred.get_series_all_releases('DJIA')
+#djia = fred.get_series_all_releases('DJIA')
 treas10 = fred.get_series_all_releases('DGS10') #10-Year Treasury Constant Maturity Rate 
 libor3 = fred.get_series_all_releases('USD3MTD156N') #libor
 fedassets = fred.get_series_all_releases('WALCL')# All Federal Reserve Banks: Total Assets (WALCL) #Federal reserve balance sheet
-fedassets = fred.get_series_all_releases('USD12MD156N')# 12 month libor
+libor12 = fred.get_series_all_releases('USD12MD156N')# 12 month libor
 
-libor3['libor3mth']=pd.to_numeric(libor3['value'], errors='coerce')
-libor3['datex']=pd.to_datetime(libor3['date'], errors='coerce')
-libor3['month']= libor3['date'].dt.strftime("%m,%y")
-
-
-#value line geometric average
-
-
-#data2['amount']=pd.to_numeric(data2['value'], errors='coerce')
-#data2['date2']=pd.to_datetime(data2['date'], errors='coerce')
-
-
+############
+#Quandl Data
+#############
 quandl.ApiConfig.api_key = 'BVno6pBYgcEvZJ6uctTr'
 ####################
 #Get the Quandl Data
@@ -66,16 +63,7 @@ fxusdmex = quandl.get("FRED/DEXMXUS")
 fxusdche = quandl.get("FRED/DEXSZUS")
 fxusdeur = quandl.get("FED/RXI_US_N_B_EU")
 
-#US Reserves
 
-res_ca = quandl.get("FRED/TRESEGCAM052N")
-res_jp = quandl.get("FRED/TRESEGJPM052N")
-res_ru = quandl.get("FRED/TRESEGRUM052N")
-
-#Gold Stock
-gld_us = quandl.get("FRED/M1476CUSM144NNBR")
-
-#libor3mth
 
 ######################
 #Clean up Column Names
@@ -103,6 +91,20 @@ fxusdaud.columns=['aud/usd']
 fxusdmex.columns=['mex/usd']
 fxusdche.columns=['che/usd']
 fxusdeur.columns=['eur/usd']
+#Clean up the FRED data
+libor3['libor3mth']=pd.to_numeric(libor3['value'], errors='coerce')
+libor3['ind']=pd.to_datetime(libor3['date'], errors='coerce')
+libor12['libor12mth']=pd.to_numeric(libor12['value'], errors='coerce')
+libor12['ind']=pd.to_datetime(libor12['date'], errors='coerce')
+treas10['treas10mth']=pd.to_numeric(treas10['value'], errors='coerce')
+treas10['ind']=pd.to_datetime(treas10['date'], errors='coerce')
+fedassets['fedassets']=pd.to_numeric(fedassets['value'], errors='coerce')
+fedassets['ind']=pd.to_datetime(fedassets['date'], errors='coerce')
+libor3x=libor3[['libor3mth','ind']]
+libor12x=libor12[['libor12mth','ind']]
+treas10x=treas10[['treas10mth','ind']]
+fedassetsx=fedassets[['fedassets','ind']]
+
 #################
 #Index Generation
 #################
@@ -137,7 +139,12 @@ df9=df8.merge(fxusdaud, on='ind', how='outer')
 df10=df9.merge(fxusdmex, on='ind', how='outer')
 df11=df10.merge(fxusdche, on='ind', how='outer')
 df12=df11.merge(fxusdeur, on='ind', how='outer')
-daily_file=df12.merge(oil, on='ind', how='outer')
+df13=df12.merge(libor3x, on='ind', how='outer')
+df14=df13.merge(libor12x, on='ind', how='outer')
+df15=df14.merge(fedassets, on='ind', how='outer')
+df16=df15.merge(treas10x, on='ind', how='outer')
+daily_file=df16.merge(oil, on='ind', how='outer')
+
 #################################
 #Merge the monthly files together
 #################################
