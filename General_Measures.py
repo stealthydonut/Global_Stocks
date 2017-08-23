@@ -20,13 +20,15 @@ djia = fred.get_series_all_releases('DJIA')
 treas10 = fred.get_series_all_releases('DGS10') #10-Year Treasury Constant Maturity Rate 
 libor3 = fred.get_series_all_releases('USD3MTD156N') #libor
 fedassets = fred.get_series_all_releases('WALCL')# All Federal Reserve Banks: Total Assets (WALCL) #Federal reserve balance sheet
+fedassets = fred.get_series_all_releases('USD12MD156N')# 12 month libor
 
 libor3['libor3mth']=pd.to_numeric(libor3['value'], errors='coerce')
+libor3['datex']=pd.to_datetime(libor3['date'], errors='coerce')
 libor3['month']= libor3['date'].dt.strftime("%m,%y")
 
-#libor3 = fred.get_series_all_releases('WALCL')
+
 #value line geometric average
-#print fUSD12MD156N
+
 
 #data2['amount']=pd.to_numeric(data2['value'], errors='coerce')
 #data2['date2']=pd.to_datetime(data2['date'], errors='coerce')
