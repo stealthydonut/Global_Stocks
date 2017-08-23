@@ -12,10 +12,22 @@ if sys.version_info[0] < 3:
     from StringIO import StringIO as stio
 else:
     from io import StringIO as stio
+import requests
+from pandas.compat import StringIO
+
 #import matplotlib
 #import matplotlib.pyplot as plt
 
 #Sourced from the following site https://github.com/mortada/fredapi
+
+#########
+#GLD Data
+#########
+
+dls = "http://www.spdrgoldshares.com/assets/dynamic/GLD/GLD_US_archive_EN.csv"
+ r = requests.get(dls)
+daily_prices = pd.read_csv(StringIO(r.text), skiprows=6)
+
 
 ##########
 #FRED Data
@@ -39,7 +51,7 @@ ism = quandl.get("ISM/NONMAN_INVSENT")
 ism2 = quandl.get("ISM/MAN_PMI") #another ISM
 gold = quandl.get("LBMA/GOLD")
 silver = quandl.get("LBMA/SILVER")
-#copper
+#copper = quandl.get ("LME/PR_CU")  #copper
 oil = quandl.get("OPEC/ORB")
 uranium = quandl.get("ODA/PURAN_USD")
 ustax = quandl.get("FMSTREAS/MTS")
@@ -91,7 +103,9 @@ fxusdaud.columns=['aud/usd']
 fxusdmex.columns=['mex/usd']
 fxusdche.columns=['che/usd']
 fxusdeur.columns=['eur/usd']
+#######################
 #Clean up the FRED data
+#######################
 libor3['libor3mth']=pd.to_numeric(libor3['value'], errors='coerce')
 libor3['ind']=pd.to_datetime(libor3['date'], errors='coerce')
 libor12['libor12mth']=pd.to_numeric(libor12['value'], errors='coerce')
@@ -104,6 +118,40 @@ libor3x=libor3[['libor3mth','ind']]
 libor12x=libor12[['libor12mth','ind']]
 treas10x=treas10[['treas10mth','ind']]
 fedassetsx=fedassets[['fedassets','ind']]
+######################
+#Clean up the GLD data
+######################
+daily_prices2=daily_prices
+daily_prices2['ind']=pd.to_datetime(daily_prices2['Date'], errors='coerce')
+daily_prices2['GLD Closex'] = daily_prices2.loc[daily_prices2[' GLD Close'].index, ' GLD Close'].map(lambda x: str(x).replace('HOLIDAY',''))
+daily_prices2['GLD Close']=pd.to_numeric(daily_prices2['GLD Closex'], errors='coerce')
+daily_prices2['LBMA Gold Pricex'] = daily_prices2.loc[daily_prices2[' LBMA Gold Price'].index, ' LBMA Gold Price'].map(lambda x: str(x).replace('HOLIDAY',''))
+daily_prices2['LBMA Gold Pricex'] = daily_prices2.loc[daily_prices2['LBMA Gold Pricex'].index, 'LBMA Gold Pricex'].map(lambda x: str(x).replace('$',''))
+daily_prices2['LBMA Gold Price']=pd.to_numeric(daily_prices2['LBMA Gold Pricex'], errors='coerce')
+daily_prices2['NAV per GLD in Goldx'] = daily_prices2.loc[daily_prices2[' NAV per GLD in Gold'].index, ' NAV per GLD in Gold'].map(lambda x: str(x).replace('HOLIDAY',''))
+daily_prices2['NAV per GLD in Gold']=pd.to_numeric(daily_prices2['NAV per GLD in Goldx'], errors='coerce')
+daily_prices2['NAV/sharex'] = daily_prices2.loc[daily_prices2[' NAV/share at 10.30 a.m. NYT'].index, ' NAV/share at 10.30 a.m. NYT'].map(lambda x: str(x).replace('HOLIDAY',''))
+daily_prices2['NAV/share']=pd.to_numeric(daily_prices2['NAV/sharex'], errors='coerce')
+daily_prices2['Indicative Price of GLDx'] = daily_prices2.loc[daily_prices2[' Indicative Price of GLD at 4.15 p.m. NYT'].index, ' Indicative Price of GLD at 4.15 p.m. NYT'].map(lambda x: str(x).replace('HOLIDAY',''))
+daily_prices2['Indicative Price of GLD']=pd.to_numeric(daily_prices2['Indicative Price of GLDx'], errors='coerce')
+daily_prices2['Mid point of bid/ask spreadx'] = daily_prices2.loc[daily_prices2[' Mid point of bid/ask spread at 4.15 p.m. NYT#'].index, ' Mid point of bid/ask spread at 4.15 p.m. NYT#'].map(lambda x: str(x).replace('HOLIDAY',''))
+daily_prices2['Mid point of bid/ask spreadx'] = daily_prices2.loc[daily_prices2['Mid point of bid/ask spreadx'].index, 'Mid point of bid/ask spreadx'].map(lambda x: str(x).replace('$',''))
+daily_prices2['Mid point of bid/ask spread']=pd.to_numeric(daily_prices2['Mid point of bid/ask spreadx'], errors='coerce')
+daily_prices2['Premium/Discount of GLD mid point v Indicative Value of GLDx'] = daily_prices2.loc[daily_prices2[' Premium/Discount of GLD mid point v Indicative Value of GLD at 4.15 p.m. NYT'].index, ' Premium/Discount of GLD mid point v Indicative Value of GLD at 4.15 p.m. NYT'].map(lambda x: str(x).replace('HOLIDAY',''))
+daily_prices2['Premium/Discount of GLD mid point v Indicative Value of GLDx'] = daily_prices2.loc[daily_prices2['Premium/Discount of GLD mid point v Indicative Value of GLDx'].index, 'Premium/Discount of GLD mid point v Indicative Value of GLDx'].map(lambda x: str(x).replace('%',''))
+daily_prices2['Premium/Discount of GLD mid point v Indicative Value of GLD']=pd.to_numeric(daily_prices2['Premium/Discount of GLD mid point v Indicative Value of GLDx'], errors='coerce')
+daily_prices2['Daily Share Volumex'] = daily_prices2.loc[daily_prices2[' Daily Share Volume'].index, ' Daily Share Volume'].map(lambda x: str(x).replace('HOLIDAY',''))
+daily_prices2['Daily Share Volume']=pd.to_numeric(daily_prices2['Daily Share Volumex'], errors='coerce')
+daily_prices2['Total Net Asset Value Ounces in the Trustx'] = daily_prices2.loc[daily_prices2[' Total Net Asset Value Ounces in the Trust as at 4.15 p.m. NYT'].index, ' Total Net Asset Value Ounces in the Trust as at 4.15 p.m. NYT'].map(lambda x: str(x).replace('HOLIDAY',''))
+daily_prices2['Total Net Asset Value Ounces in the Trust']=pd.to_numeric(daily_prices2['Total Net Asset Value Ounces in the Trustx'], errors='coerce')
+daily_prices2['Total Net Asset Value Tonnes in the Trustx'] = daily_prices2.loc[daily_prices2[' Total Net Asset Value Tonnes in the Trust as at 4.15 p.m. NYT'].index, ' Total Net Asset Value Tonnes in the Trust as at 4.15 p.m. NYT'].map(lambda x: str(x).replace('HOLIDAY',''))
+daily_prices2['Total Net Asset Value Tonnes in the Trust']=pd.to_numeric(daily_prices2['Total Net Asset Value Tonnes in the Trustx'], errors='coerce')
+daily_prices2['Total Net Asset Value in the Trustx'] = daily_prices2.loc[daily_prices2[' Total Net Asset Value in the Trust'].index, ' Total Net Asset Value in the Trust'].map(lambda x: str(x).replace('HOLIDAY',''))
+daily_prices2['Total Net Asset Value in the Trust']=pd.to_numeric(daily_prices2['Total Net Asset Value in the Trustx'], errors='coerce')
+dfgld = daily_prices2[['ind','GLD Close','LBMA Gold Price','NAV per GLD in Gold','NAV/share','Indicative Price of GLD','Mid point of bid/ask spread',\
+'Premium/Discount of GLD mid point v Indicative Value of GLD','Daily Share Volume','Total Net Asset Value Ounces in the Trust','Total Net Asset Value Tonnes in the Trust',\
+'Total Net Asset Value in the Trust']]
+
 
 #################
 #Index Generation
@@ -143,7 +191,9 @@ df13=df12.merge(libor3x, on='ind', how='outer')
 df14=df13.merge(libor12x, on='ind', how='outer')
 df15=df14.merge(fedassets, on='ind', how='outer')
 df16=df15.merge(treas10x, on='ind', how='outer')
-daily_file=df16.merge(oil, on='ind', how='outer')
+df17=df16.merge(dfgld, on='ind', how='outer')
+daily_file=df17.merge(oil, on='ind', how='outer')
+
 
 #################################
 #Merge the monthly files together
