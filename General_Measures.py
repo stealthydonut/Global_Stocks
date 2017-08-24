@@ -25,7 +25,7 @@ from pandas.compat import StringIO
 #########
 
 dls = "http://www.spdrgoldshares.com/assets/dynamic/GLD/GLD_US_archive_EN.csv"
- r = requests.get(dls)
+r = requests.get(dls)
 daily_prices = pd.read_csv(StringIO(r.text), skiprows=6)
 
 
@@ -224,6 +224,18 @@ fed_funds_rate['monthyear'] = fed_funds_rate['ind'].dt.strftime("%m,%y")
 #Create the monthly files for daily data
 ########################################
 daily_file['monthyear'] = daily_file['ind'].dt.strftime("%m,%y")
+
+mf=ustax.merge(daily_file, on='monthyear', how='outer')
+mf1=mf.merge(ism, on='monthyear', how='outer')
+mf2=mf1.merge(shiller, on='monthyear', how='outer')
+mf3=mf2.merge(balticdryindex, on='monthyear', how='outer')
+mf4=mf3.merge(balticcapesizeindex, on='monthyear', how='outer')
+mf5=mf4.merge(balticsupramexindex, on='monthyear', how='outer')
+mf6=mf5.merge(balticpanamaxindex, on='monthyear', how='outer')
+mf7=mf6.merge(trade_Weigted_Index, on='monthyear', how='outer')
+mf8=mf7.merge(fed_funds_rate, on='monthyear', how='outer')
+daily_monthly_file=mf8.merge(uranium, on='monthyear', how='outer')
+
 #################################################
 #Create daycnts so the averages can be calculated
 #################################################
