@@ -220,8 +220,8 @@ balticsupramexindex['ind'] = balticsupramexindex.index
 balticsupramexindex['monthyear'] = balticsupramexindex['ind'].dt.strftime("%m,%y")
 balticpanamaxindex['ind'] = balticpanamaxindex.index
 balticpanamaxindex['monthyear'] = balticpanamaxindex['ind'].dt.strftime("%m,%y")
-trade_Weighted_Index['ind'] = trade_Weigted_Index.index
-trade_Weighted_Index['monthyear'] = trade_Weigted_Index['ind'].dt.strftime("%m,%y")
+trade_Weighted_Index['ind'] = trade_Weighted_Index.index
+trade_Weighted_Index['monthyear'] = trade_Weighted_Index['ind'].dt.strftime("%m,%y")
 fed_funds_rate['ind'] = fed_funds_rate.index
 fed_funds_rate['monthyear'] = fed_funds_rate['ind'].dt.strftime("%m,%y")
 #####################################
@@ -259,9 +259,13 @@ mf=ustaxx.merge(fed_funds_ratex, on='monthyear', how='outer')
 mf1=mf.merge(ismx, on='monthyear', how='outer')
 mf2=mf1.merge(shillerx, on='monthyear', how='outer')
 mf3=mf2.merge(balticdryindexx, on='monthyear', how='outer')
-mf4=mf3.merge(trade_Weigted_Indexx, on='monthyear', how='outer')
-mf5=mf4.merge(fed_funds_ratex, on='monthyear', how='outer')
-daily_monthly_file=mf6.merge(uraniumx, on='monthyear', how='outer')
+mf4=mf3.merge(trade_Weighted_Indexx, on='monthyear', how='outer')
+mf5=mf4.merge(uraniumx, on='monthyear', how='outer')
+#mf6=mf5.merge(balticcapesizeindexx, on='monthyear', how='outer')
+#mf7=mf6.merge(balticsupramexindexx, on='monthyear', how='outer')
+#mf8=mf7.merge(balticpanamaxindexx, on='monthyear', how='outer')
+daily_monthly_file=mf5.merge(daily_file, on='monthyear', how='outer')
+
 #mf4=mf3.merge(balticcapesizeindex, on='monthyear', how='outer')
 #mf5=mf4.merge(balticsupramexindex, on='monthyear', how='outer')
 #mf6=mf5.merge(balticpanamaxindex, on='monthyear', how='outer')
@@ -290,7 +294,7 @@ mf3=mf2.merge(balticdryindex, on='monthyear', how='outer')
 mf4=mf3.merge(balticcapesizeindex, on='monthyear', how='outer')
 mf5=mf4.merge(balticsupramexindex, on='monthyear', how='outer')
 mf6=mf5.merge(balticpanamaxindex, on='monthyear', how='outer')
-mf7=mf6.merge(trade_Weigted_Index, on='monthyear', how='outer')
+mf7=mf6.merge(trade_Weighted_Index, on='monthyear', how='outer')
 mf8=mf7.merge(fed_funds_rate, on='monthyear', how='outer')
 monthly_file=mf8.merge(uranium, on='monthyear', how='outer')
 ############################
