@@ -7,12 +7,14 @@ import pandas as pd
 import numpy as np
 import StringIO
 import datetime
+import requests
 import sys
 if sys.version_info[0] < 3: 
     from StringIO import StringIO as stio
 else:
     from io import StringIO as stio
-import requests
+    
+
 from pandas.compat import StringIO
 
 #import matplotlib
@@ -62,7 +64,7 @@ balticdryindex = quandl.get("LLOYDS/BDI")
 balticcapesizeindex = quandl.get("LLOYDS/BCI") #>150k DWT
 balticsupramexindex = quandl.get("LLOYDS/BSI") #50-60k DWT
 balticpanamaxindex = quandl.get("LLOYDS/BPI") #65-80k DWT
-trade_Weigted_Index = quandl.get("FRED/TWEXBPA")
+trade_Weighted_Index = quandl.get("FRED/TWEXBPA")
 fed_funds_rate = quandl.get("FED/RIFSPFF_N_M")
 fxusdcad = quandl.get("FRED/DEXCAUS")
 fxusdyuan = quandl.get("FRED/DEXCHUS")
@@ -93,6 +95,8 @@ balticdryindex.columns=['balticdryindex Index']
 balticcapesizeindex.columns=['balticcapesizeindex Index']
 balticsupramexindex.columns=['balticsupramexindex Index']
 balticpanamaxindex.columns=['balticpanamaxindex Index']
+trade_Weighted_Index.columns=['trade_wighted_index']
+fed_funds_rate.columns=['fed_funds_rate']
 fxusdcad.columns=['cad/usd']
 fxusdyuan.columns=['yuan/usd']
 fxusdjap.columns=['jap/usd']
@@ -216,25 +220,54 @@ balticsupramexindex['ind'] = balticsupramexindex.index
 balticsupramexindex['monthyear'] = balticsupramexindex['ind'].dt.strftime("%m,%y")
 balticpanamaxindex['ind'] = balticpanamaxindex.index
 balticpanamaxindex['monthyear'] = balticpanamaxindex['ind'].dt.strftime("%m,%y")
-trade_Weigted_Index['ind'] = trade_Weigted_Index.index
-trade_Weigted_Index['monthyear'] = trade_Weigted_Index['ind'].dt.strftime("%m,%y")
+trade_Weighted_Index['ind'] = trade_Weigted_Index.index
+trade_Weighted_Index['monthyear'] = trade_Weigted_Index['ind'].dt.strftime("%m,%y")
 fed_funds_rate['ind'] = fed_funds_rate.index
 fed_funds_rate['monthyear'] = fed_funds_rate['ind'].dt.strftime("%m,%y")
+#####################################
+#Clean up files to join to daily file
+#####################################
+ismx = ism
+ismx.__delitem__('ind')
+uraniumx = uranium
+uraniumx.__delitem__('ind')
+ustaxx = ustax
+ustaxx.__delitem__('ind')
+shillerx = shiller
+shillerx.__delitem__('ind')
+balticdryindexx = balticdryindex
+balticdryindexx.__delitem__('ind')
+balticcapesizeindexx = balticcapesizeindex
+balticcapesizeindexx.__delitem__('ind')
+balticsupramexindexx = balticsupramexindex
+balticsupramexindexx.__delitem__('ind')
+balticpanamaxindexx = balticpanamaxindex
+balticpanamaxindexx.__delitem__('ind')
+trade_Weighted_Indexx = trade_Weighted_Index
+trade_Weighted_Indexx.__delitem__('ind')
+fed_funds_ratex = fed_funds_rate
+fed_funds_ratex.__delitem__('ind')
+
 ########################################
 #Create the monthly files for daily data
 ########################################
+
+
 daily_file['monthyear'] = daily_file['ind'].dt.strftime("%m,%y")
 
-mf=ustax.merge(daily_file, on='monthyear', how='outer')
-mf1=mf.merge(ism, on='monthyear', how='outer')
-mf2=mf1.merge(shiller, on='monthyear', how='outer')
-mf3=mf2.merge(balticdryindex, on='monthyear', how='outer')
-mf4=mf3.merge(balticcapesizeindex, on='monthyear', how='outer')
-mf5=mf4.merge(balticsupramexindex, on='monthyear', how='outer')
-mf6=mf5.merge(balticpanamaxindex, on='monthyear', how='outer')
-mf7=mf6.merge(trade_Weigted_Index, on='monthyear', how='outer')
-mf8=mf7.merge(fed_funds_rate, on='monthyear', how='outer')
-daily_monthly_file=mf8.merge(uranium, on='monthyear', how='outer')
+mf=ustaxx.merge(fed_funds_ratex, on='monthyear', how='outer')
+mf1=mf.merge(ismx, on='monthyear', how='outer')
+mf2=mf1.merge(shillerx, on='monthyear', how='outer')
+mf3=mf2.merge(balticdryindexx, on='monthyear', how='outer')
+mf4=mf3.merge(trade_Weigted_Indexx, on='monthyear', how='outer')
+mf5=mf4.merge(fed_funds_ratex, on='monthyear', how='outer')
+daily_monthly_file=mf6.merge(uraniumx, on='monthyear', how='outer')
+#mf4=mf3.merge(balticcapesizeindex, on='monthyear', how='outer')
+#mf5=mf4.merge(balticsupramexindex, on='monthyear', how='outer')
+#mf6=mf5.merge(balticpanamaxindex, on='monthyear', how='outer')
+#mf7=mf6.merge(trade_Weigted_Index, on='monthyear', how='outer')
+#mf8=mf7.merge(fed_funds_rate, on='monthyear', how='outer')
+#daily_monthly_file=mf8.merge(uranium, on='monthyear', how='outer')
 
 #################################################
 #Create daycnts so the averages can be calculated
