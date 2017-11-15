@@ -20,3 +20,6 @@ dfmax=df['price'].max()
 dfmin=df['price'].min()
 dfmaxtime=df['UNIXTIME'].max()
 dfmintime=df['UNIXTIME'].min()
+
+
+df2['HIGH']=df['price'].idxmax()
