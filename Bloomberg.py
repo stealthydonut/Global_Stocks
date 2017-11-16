@@ -1,9 +1,16 @@
-import urllib
-import re
-import json
-import csv
 import pandas as pd
+import requests
+from pandas.compat import StringIO
+import StringIO
 import datetime
+import ast
+import itertools
+import sys
+if sys.version_info[0] < 3: 
+    from StringIO import StringIO as stio
+else:
+    from io import StringIO as stio
+
 
 ################################################
 #Get the list of Canadian Tickers from Bloomberg
@@ -101,7 +108,9 @@ for i in tickerlist:
         goldrecord = goldrecord.append(record_gold, ignore_index=False)        
     except:
        print i
-        
+
+    
+    
 ##################################
 #Put the dataset back into storage
 ##################################
