@@ -16,15 +16,36 @@ labels=['time','price']
 df['UNIXTIME'] = pd.to_datetime(df['time'], unit='ms')
 df['ind']=df.index
 df['TICKER']='AAPL:US'
-#Get the open, close, high, low  
+###############################
+#Get the open, close, high, low
+###############################
 dfmax=df['price'].max()
 dfmin=df['price'].min()
 dfmaxtime=df['UNIXTIME'].max()
 dfmintime=df['UNIXTIME'].min() 
-#Identify the 
+###########
+#High price
+###########
 high=df[df['price']==dfmax]
+high['HIGH']=high['price']
+high['DATE'] = high['UNIXTIME'].dt.strftime("%x")
+del high['time']
+del high['ind']
+del high['price']
+del high['UNIXTIME']
+###########
+#Low price
+###########
 low=df[df['price']==dfmin]
+low['LOW']=low['price']
+low['DATE'] = low['UNIXTIME'].dt.strftime("%x")
+del low['time']
+del low['ind']
+del low['price']
+del low['UNIXTIME']
+###########
 #Open Price
+###########
 openpr=df[df['UNIXTIME']==dfmaxtime]
 openpr['OPEN']=openpr['price']
 openpr['DATE'] = openpr['UNIXTIME'].dt.strftime("%x")
@@ -41,5 +62,8 @@ del close['ind']
 del close['price']
 del close['UNIXTIME']
 opcl=pd.merge(close, openpr, how='outer', left_on=('TICKER','DATE'), right_on=('TICKER','DATE'))
+opclhi=pd.merge(high, opcl, how='outer', left_on=('TICKER','DATE'), right_on=('TICKER','DATE'))
+opclhilo=pd.merge(low, opclhi, how='outer', left_on=('TICKER','DATE'), right_on=('TICKER','DATE'))
+record=opclhilo[['DATE','TICKER','OPEN','HIGH','LOW','CLOSE']]
+record_gold=record.drop_duplicates(['DATE','TICKER'], keep='last')
 
-print opcl.dtypes
