@@ -102,4 +102,24 @@ for i in tickerlist:
     except:
        print i
         
+##################################
+#Put the dataset back into storage
+##################################
+from google.cloud import storage
+client = storage.Client()
+bucket2 = client.get_bucket('stagingarea')
+df_out = pd.DataFrame(goldrecord)
+df_out.to_csv('daily.csv', index=False)
+blob2 = bucket2.blob('daily.csv')
+blob2.upload_from_filename('daily.csv')
 
+##################################
+#Put the dataset back into storage
+##################################
+from google.cloud import storage
+client = storage.Client()
+bucket2 = client.get_bucket('stagingarea')
+df_out = pd.DataFrame(minute)
+df_out.to_csv('minute.csv', index=False)
+blob2 = bucket2.blob('minute.csv')
+blob2.upload_from_filename('minute.csv')
