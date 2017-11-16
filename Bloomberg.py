@@ -4,12 +4,34 @@ import json
 import csv
 import pandas as pd
 import datetime
+
+################################################
+#Get the list of Canadian Tickers from Bloomberg
+################################################
+from google.cloud import storage
+client = storage.Client()
+bucket = client.get_bucket('bloomberg')
+# Then do other things...
+blob = bucket.get_blob('cn_ticker.csv')
+content = blob.download_as_string()
+#Because the pandas dataframe can only read from buffers or files, we need to take the string and put it into a buffer
+inMemoryFile = StringIO.StringIO()
+inMemoryFile.write(content)
+#When you buffer, the "cursor" is at the end, and when you read it, the starting position is at the end and it will not pick up anything
+inMemoryFile.seek(0)
+#Note - anytime you read from a buffer you need to seek so it starts at the beginning
+#The low memory false exists because there was a lot of data
+cnticker=pd.read_csv(inMemoryFile, low_memory=False)
+df1=cnticker['Ticker']
+df2=df1.values.T.tolist()
+#strip out leading and trailing 0's
+tickerlist = [x.strip(' ') for x in df2]  
+
 ###########################################
 #Extract minute by minute bloomberg prices#
 ###########################################
 minute = pd.DataFrame()
 goldrecord = pd.DataFrame()
-tickerlist=[('AAPL:US'),('GOLD:CN')]
 
 for i in tickerlist:
     try:
