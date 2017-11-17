@@ -11,7 +11,8 @@ if sys.version_info[0] < 3:
 else:
     from io import StringIO as stio
 
-datevar=pd.to_datetime('today')
+datevar=str(pd.to_datetime('today'))
+
 ################################################
 #Get the list of Canadian Tickers from Bloomberg
 ################################################
@@ -34,7 +35,7 @@ df2=df1.values.T.tolist()
 #strip out leading and trailing 0's
 tickerlist = [x.strip(' ') for x in df2]  
 
-tickerlist=('GOLD:CN','ABX:CN')
+#tickerlist=('GOLD:CN','ABX:CN')
 
 ###########################################
 #Extract minute by minute bloomberg prices#
@@ -111,7 +112,13 @@ for i in tickerlist:
     except:
        print i
 
-    
+stamp1='minute_'
+stamp2='daily_'
+datevar=str(pd.to_datetime('today'))
+ftype='.csv'
+stampname=stamp2+datevar+ftype
+stampname2=stamp1+datevar+ftype
+
     
 ##################################
 #Put the dataset back into storage
@@ -120,9 +127,9 @@ from google.cloud import storage
 client = storage.Client()
 bucket2 = client.get_bucket('stagingarea')
 df_out = pd.DataFrame(goldrecord)
-df_out.to_csv('daily.csv', index=False)
-blob2 = bucket2.blob('daily.csv')
-blob2.upload_from_filename('daily.csv')
+df_out.to_csv(stampname, index=False)
+blob2 = bucket2.blob(stampname)
+blob2.upload_from_filename(stampname)
 
 ##################################
 #Put the dataset back into storage
@@ -131,6 +138,6 @@ from google.cloud import storage
 client = storage.Client()
 bucket2 = client.get_bucket('stagingarea')
 df_out = pd.DataFrame(minute)
-df_out.to_csv('minute.csv', index=False)
-blob2 = bucket2.blob('minute.csv')
-blob2.upload_from_filename('minute.csv')
+df_out.to_csv(stampname2, index=False)
+blob2 = bucket2.blob(stampname2)
+blob2.upload_from_filename(stampname2)
