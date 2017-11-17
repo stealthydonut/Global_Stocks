@@ -11,7 +11,7 @@ if sys.version_info[0] < 3:
 else:
     from io import StringIO as stio
 
-
+datevar=pd.to_datetime('today')
 ################################################
 #Get the list of Canadian Tickers from Bloomberg
 ################################################
@@ -33,6 +33,8 @@ df1=cnticker['Ticker']
 df2=df1.values.T.tolist()
 #strip out leading and trailing 0's
 tickerlist = [x.strip(' ') for x in df2]  
+
+tickerlist=('GOLD:CN','ABX:CN')
 
 ###########################################
 #Extract minute by minute bloomberg prices#
