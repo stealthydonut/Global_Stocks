@@ -32,24 +32,36 @@ inMemoryFile.seek(0)
 #Note - anytime you read from a buffer you need to seek so it starts at the beginning
 #The low memory false exists because there was a lot of data
 cnticker=pd.read_csv(inMemoryFile, low_memory=False)
-df1=cnticker['Ticker']
+cnticker['Tickergold'] = cnticker.loc[cnticker['Ticker'].index, 'Ticker'].map(lambda x: x.replace(':CN',''))
+df1=cnticker['Tickergold']
 df2=df1.values.T.tolist()
 #strip out leading and trailing 0's
 tickerlist = [x.strip(' ') for x in df2]  
 
+###########################################
+#Get the fundamental data from morningstar#
+###########################################
+
+tickerlist=('FB','GM')
 #for canadian stocks http://financials.morningstar.com/ajax/exportKR2CSV.html?t=GOLD&region=CAN&culture=en-CA
+
+for i in tickerlist:
+    linkstart="http://financials.morningstar.com/ajax/exportKR2CSV.html?t="
+    ticker=''.join(i)
+    link=linkstart+ticker
+    f = urllib.urlopen(link)
+    #Financials
+    financials = pd.read_csv(f, sep=",",names=['measure','2007-12','2008-12','2009-12','2010-12','2011-12','2012-12','2013-12','2014-12','2015-12','2016-12','TTM'], skiprows=3, nrows=15)
+    #Get the Balance Sheet Items
+    f = urllib.urlopen(link)
+    balance_sheet = pd.read_csv(f, sep=",",names=['measure','2007-12','2008-12','2009-12','2010-12','2011-12','2012-12','2013-12','2014-12','2015-12','2016-12','TTM'], skiprows=74, nrows=20)
+    bigdata = balance_sheet.append(financials, ignore_index=True)
+    financials['ticker']=ticker
+    
+    #Liquidity Financial Health
 link="http://financials.morningstar.com/ajax/exportKR2CSV.html?t=FB"
 f = urllib.urlopen(link)
-#Get the Financials
-financials = pd.read_csv(f, sep=",",names=['measure','2007-12','2008-12','2009-12','2010-12','2011-12','2012-12','2013-12','2014-12','2015-12','2016-12','TTM'], skiprows=3, nrows=15)
-#Get the Balance Sheet Items
-link="http://financials.morningstar.com/ajax/exportKR2CSV.html?t=FB"
-f = urllib.urlopen(link)
-balance_sheet = pd.read_csv(f, sep=",",names=['measure','2007-12','2008-12','2009-12','2010-12','2011-12','2012-12','2013-12','2014-12','2015-12','2016-12','TTM'], skiprows=74, nrows=20)
-#Liquidity Financial Health
-link="http://financials.morningstar.com/ajax/exportKR2CSV.html?t=FB"
-f = urllib.urlopen(link)
-balance_sheet = pd.read_csv(f, sep=",",names=['measure','2007-12','2008-12','2009-12','2010-12','2011-12','2012-12','2013-12','2014-12','2015-12','2016-12','TTM'], skiprows=96, nrows=4)
+financial_health = pd.read_csv(f, sep=",",names=['measure','2007-12','2008-12','2009-12','2010-12','2011-12','2012-12','2013-12','2014-12','2015-12','2016-12','TTM'], skiprows=96, nrows=4)
 
 
 
