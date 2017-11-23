@@ -63,6 +63,8 @@ for i in tickerlist:
     bigdata = big.append(financial_health, ignore_index=True)
     bigdata['ticker']=ticker
     goldrecord = goldrecord.append(bigdata, ignore_index=False)  
+
+    
     
 ##################################
 #Put the dataset back into storage
