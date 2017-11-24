@@ -73,9 +73,9 @@ from google.cloud import storage
 client = storage.Client()
 bucket2 = client.get_bucket('stagingarea')
 df_out = pd.DataFrame(goldrecord)
-df_out.to_csv('morningstar', index=False)
-blob2 = bucket2.blob('morningstar')
-blob2.upload_from_filename('morningstar')
+df_out.to_csv('morningstar.csv', index=False)
+blob2 = bucket2.blob('morningstar.csv')
+blob2.upload_from_filename('morningstar.csv')
     
     
 
