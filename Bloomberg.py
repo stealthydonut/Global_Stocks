@@ -143,3 +143,5 @@ df_out = pd.DataFrame(minute)
 df_out.to_csv(stampname2, index=False)
 blob2 = bucket2.blob(stampname2)
 blob2.upload_from_filename(stampname2)
+
+import pandas as pd
