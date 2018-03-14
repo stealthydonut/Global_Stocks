@@ -115,6 +115,21 @@ fxusdaud.columns=['aud/usd']
 fxusdmex.columns=['mex/usd']
 fxusdche.columns=['che/usd']
 fxusdeur.columns=['eur/usd']
+#Only include some variables
+cobaltgold=cobalt[['Cash Buyer','3-months Buyer']]
+molybdenumgold=molybdenum[['Cash Buyer','3-months Buyer']]
+zincgold=zinc[['Cash Buyer','3-months Buyer']]
+tingold=tin[['Cash Buyer','3-months Buyer']]
+aluminumgold=aluminum[['Cash Buyer','3-months Buyer']]
+nickelgold=nickel[['Cash Buyer','3-months Buyer']]
+coppergold=copper[['Cash Buyer','3-months Buyer']]
+cobaltgold.columns=['cobalt price','cobalt 3mth price']
+molybdenumgold.columns=['molybdenum','molybdenum 3mth price']
+zincgold.columns=['zinc','zinc 3mth price']
+tingold.columns=['tin','tin 3mth price']
+aluminumgold.columns=['aluminum','aluminum 3mth price']
+nickelgold.columns=['nickel','nickel 3mth price']
+coppergold.columns=['copper','copper 3mth price']
 #######################
 #Clean up the FRED data
 #######################
@@ -182,7 +197,14 @@ fxusdsko['ind']=fxusdsko.index
 fxusdaud['ind']=fxusdaud.index
 fxusdmex['ind']=fxusdmex.index
 fxusdche['ind']=fxusdche.index
-fxusdeur['ind']=fxusdeur.index         
+fxusdeur['ind']=fxusdeur.index
+cobaltgold['ind']=cobaltgold.index
+molybdenumgold['ind']=molybdenumgold.index
+zincgold['ind']=zincgold.index
+tingold['ind']=tingold.index
+aluminumgold['ind']=aluminumgold.index
+nickelgold['ind']=nickelgold.index
+coppergold['ind']=coppergold.index
 ###########################
 #Merge daily files together
 ###########################
@@ -204,7 +226,14 @@ df14=df13.merge(libor12x, on='ind', how='outer')
 df15=df14.merge(fedassets, on='ind', how='outer')
 df16=df15.merge(treas10x, on='ind', how='outer')
 df17=df16.merge(dfgld, on='ind', how='outer')
-daily_file=df17.merge(oil, on='ind', how='outer')
+df18=df17.merge(cobaltgold, on='ind', how='outer')
+df19=df18.merge(molybdenumgold, on='ind', how='outer')
+df20=df19.merge(zincgold, on='ind', how='outer')
+df21=df20.merge(tingold, on='ind', how='outer')
+df22=df21.merge(aluminumgold, on='ind', how='outer')
+df23=df22.merge(nickelgold, on='ind', how='outer')
+df24=df23.merge(coppergold, on='ind', how='outer')
+daily_file=df24.merge(oil, on='ind', how='outer')
 
 
 #################################
