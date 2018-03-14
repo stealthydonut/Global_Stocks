@@ -76,7 +76,15 @@ fxusdaud = quandl.get("FRED/DEXUSAL")
 fxusdmex = quandl.get("FRED/DEXMXUS")
 fxusdche = quandl.get("FRED/DEXSZUS")
 fxusdeur = quandl.get("FED/RXI_US_N_B_EU")
-
+soybean = quandl.get("TFGRAIN/SOYBEANS")
+corn = quandl.get("TFGRAIN/CORN")
+cobalt = quandl.get("LME/PR_CO")
+molybdenum = quandl.get("LME/PR_MO")
+zinc = quandl.get("LME/PR_ZI")
+tin = quandl.get("LME/PR_TN")
+aluminum = quandl.get("LME/PR_AL")
+nickel = quandl.get("LME/PR_NI")
+copper = quandl.get("LME/PR_CU")
 
 
 ######################
